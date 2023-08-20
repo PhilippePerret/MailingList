@@ -4,6 +4,12 @@ class MessageTypeBox
     @filebox = filebox
   end
 
+  # @return [String] Le message où ne reste plus qu'à mettre les
+  # variables propres aux destinataires
+  def message_type
+    @message_type ||= build_and_return_message_type
+  end
+
   # @return [String] le message brut tel qu'il se trouve dans le
   # fichier de mailing
   def raw_code
@@ -15,7 +21,7 @@ class MessageTypeBox
   # 
   def check
     images.each do |img|
-      err = image_ok?(img) 
+      err = image_ok?(img)
       err.nil? || raise(err)
     end
   rescue Exception => e
@@ -55,6 +61,16 @@ class MessageTypeBox
 
 
   private
+
+    # Fabrication du message final, avec tout transformé en HTML et
+    # les images remplacées par leur code brut
+    # 
+    # @return [String] le code final (qui sera consigné dans 
+    # @message_type)
+    # 
+    def build_and_return_message_type
+      
+    end
 
     # Vérifie que l'image définie par la clé +key_img+ soit valide
     # c'est-à-dire :

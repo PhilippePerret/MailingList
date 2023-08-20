@@ -4,6 +4,8 @@
 # 
 require 'csv'
 require 'yaml'
+require 'base64'
+require 'kramdown'
 
 LANG = 'fr'
 APP_FOLDER = File.dirname(__dir__)

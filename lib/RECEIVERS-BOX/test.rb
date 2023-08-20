@@ -20,7 +20,7 @@ class ReceiversBoxTest < Minitest::Test
   def receivers
     @receivers ||= begin
       filebox = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','bon_file_mailing.md'))
-      receivers = ReceiversBox.new(filebox)
+      ReceiversBox.new(filebox)
     end
   end
 

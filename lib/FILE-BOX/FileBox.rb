@@ -25,6 +25,12 @@ class FileBox
   def send(file: nil, options: nil)
     check_file_param(file || path)
     check_options_param(options)
+    # 
+    # L'instance (boite) qui gère le message-type
+    # 
+    msgtype = MessageTypeBox.new(self)
+    msgtype.check
+    
   rescue VPLError => e
     e.draw_motor
     raise e.message # pour utiliser assert_raises dans les tests
@@ -34,15 +40,16 @@ class FileBox
   end
 
 
+  # @return les métadonnées
+  def metadata
+    @metadata ||= FileBox::Metadata.new(self)
+  end
+
   # @return Le code brut du fichier
   def raw_code
     @raw_code ||= File.read(@path)
   end
 
-  # @return les métadonnées
-  def metadata
-    @metadata ||= FileBox::Metadata.new(self)
-  end
 
   # @return le message brut, tel qu'il est dans le fichier
   def raw_message

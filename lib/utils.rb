@@ -6,3 +6,7 @@ def require_folder(path)
     require m
   end
 end
+
+def debug(msg)
+  STDOUT.write("\n#{msg}\n".orange)
+end

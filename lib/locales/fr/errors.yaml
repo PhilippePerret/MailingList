@@ -100,3 +100,17 @@ receiver:
     Le mail '%{mail}' est invalide.
   bad_sexe: |
     Le sexe '%{sexe}' n'est pas valide. Il devrait valoir 'H' ou 'F'.
+
+
+# --- POur les messages-type du mailing ---
+
+messageType:
+  unknown_image: |
+    L'image '%{key}' doit être définie dans les métadonnées du fichier.
+    (sa définition doit être le chemin d'accès relatif ou absolu au
+     fichier image).
+  unfound_image: |
+    L'image '%{path}' est introuvable.
+    Je ne peux pas préparer le message-type pour ce mailing. Il faut 
+    remettre l'image à cet endroit ou redéfinir la valeur de la 
+    variable '%{key}'.

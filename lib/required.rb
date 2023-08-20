@@ -20,5 +20,5 @@ MOTOR = Motor.instance
 MOTOR << MotorBox.new(title: "FILE BOX", name: :file_box, top: 2, left: 2)
 MOTOR << MotorBox.new(title: nil, name: :file_box_to_receivers, top:3, height:1, width:2, left: 16)
 MOTOR << MotorBox.new(title: "RECEIVERS", name: :receivers, top: 2, left: 18)
-MOTOR << MotorBox.new(title: nil, name: :file_box_to_msg_type, top:5, height:2, width:1, left: 8)
-MOTOR << MotorBox.new(title: "MSG TYPE BOX", name: :msg_type_box, top: 7, left: 2)
+MOTOR << MotorBox.new(title: nil, name: :filebox_to_msg_type, top:5, height:2, width:1, left: 8)
+MOTOR << MotorBox.new(title: "MSG TYPE BOX", name: :msgtype_box, top: 7, left: 2)

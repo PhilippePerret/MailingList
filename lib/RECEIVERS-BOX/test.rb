@@ -97,7 +97,7 @@ class ReceiversBoxTest < Minitest::Test
     mails = rs.collect { |r| r.mail }
     assert_includes mails, 'sonmail@chez.lui'
     assert_includes mails, 'monmail@chez.lui'
-    assert_includes mails, 'philippe.perret@yahoo.fr'
+    assert_includes mails, 'philper@yaho.fr'
     assert_includes mails, 'marion.michel33@free.fr'
     assert_includes mails, 'autremail@chez.lui'
     assert_includes mails, 'unefemme@chez.elle'

@@ -1,7 +1,7 @@
 ---
 Subject = Fichier avec des exclusions
 From = phil@atelier-icare.net
-To = ["philippe.perret@yahoo.fr,H","Marion MICHEL <marion.michel@free.fr>"]
+To = ["philper@yaho.fr,H","Marion MICHEL <marion.michel@free.fr>"]
 Exclude = "./autres/out.csv"
 ---
 Bonjour,

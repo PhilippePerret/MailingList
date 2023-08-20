@@ -93,12 +93,13 @@ class ReceiversBoxTest < Minitest::Test
     liste = "[{mail:'sonmail@chez.lui',patronyme:'Sony PATRY'},'monmail@chez.lui', '#{pth}', 'Avec PATRO <autremail@chez.lui>', 'Patro,F,unefemme@chez.elle','autreordre@mail.com,H,Bruno']"
     assert_silent { receivers.get_from_list(eval(liste)) }
     rs = receivers.receivers
-    assert_equal 7, rs.count
+    assert_equal 8, rs.count
     mails = rs.collect { |r| r.mail }
     assert_includes mails, 'sonmail@chez.lui'
     assert_includes mails, 'monmail@chez.lui'
     assert_includes mails, 'philper@yaho.fr'
     assert_includes mails, 'marion.michel33@free.fr'
+    assert_includes mails, 'invited@gmail.com'
     assert_includes mails, 'autremail@chez.lui'
     assert_includes mails, 'unefemme@chez.elle'
     assert_includes mails, 'autreordre@mail.com'
@@ -107,15 +108,6 @@ class ReceiversBoxTest < Minitest::Test
   #
   # === TRAITEMENT DES EXCLUSIONS ===
   # 
-
-  def test_on_peut_exclure_des_destinataires_avec_exclude
-    # filebox   = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','file_avec_exclusions.md'))
-    filebox   = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','file_par_csv_avec_exclusions.md'))
-    receivers = ReceiversBox.new(filebox)
-    assert_equal(1, receivers.receivers.count)
-    assert_equal('marion.michel33@free.fr', receivers.receivers.first.mail)
-    assert_equal('Marion MICHEL', receivers.receivers.first.patronyme)
-  end
 
   def test_liste_explicite_avec_exclusion_explicite
     filebox   = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','file_avec_exclusion.md'))
@@ -145,7 +137,7 @@ class ReceiversBoxTest < Minitest::Test
   def test_par_csv_avec_exclusion_explicite
     filebox   = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','file_par_csv_avec_exclusion.md'))
     receivers = ReceiversBox.new(filebox)
-    assert_equal(1, receivers.receivers.count)
+    assert_equal(2, receivers.receivers.count)
     assert_equal('marion.michel33@free.fr', receivers.receivers.first.mail)
     assert_equal('Marion MICHEL', receivers.receivers.first.patronyme)
   end
@@ -153,7 +145,7 @@ class ReceiversBoxTest < Minitest::Test
   def test_par_csv_avec_exclusions_explicites
     filebox   = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','file_par_csv_avec_exclusions.md'))
     receivers = ReceiversBox.new(filebox)
-    assert_equal(1, receivers.receivers.count)
+    assert_equal(2, receivers.receivers.count)
     assert_equal('marion.michel33@free.fr', receivers.receivers.first.mail)
     assert_equal('Marion MICHEL', receivers.receivers.first.patronyme)
   end
@@ -161,11 +153,13 @@ class ReceiversBoxTest < Minitest::Test
   def test_par_csv_avec_out_par_csv
     filebox   = FileBox.new(File.join(APP_FOLDER,'assets','tests','files','file_par_csv_avec_out_par_csv.md'))
     receivers = ReceiversBox.new(filebox)
-    assert_equal(2, receivers.receivers.count)
+    assert_equal(3, receivers.receivers.count)
     assert_equal('marion.michel33@free.fr', receivers.receivers.first.mail)
     assert_equal('Marion MICHEL', receivers.receivers.first.patronyme)
-    assert_equal('ajouted@chez.lui', receivers.receivers[1].mail)
-    assert_equal('Ajouté', receivers.receivers[1].patronyme)
+    assert_equal('invited@gmail.com', receivers.receivers[1].mail)
+    assert_equal('Invité SURPRISE', receivers.receivers[1].patronyme)
+    assert_equal('ajouted@chez.lui', receivers.receivers[2].mail)
+    assert_equal('Ajouté', receivers.receivers[2].patronyme)
   end
 
 end #/Minitest::Test

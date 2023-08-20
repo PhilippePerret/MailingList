@@ -1,0 +1,102 @@
+file_box: 
+  requires_path: |
+    Il faut définir le chemin d'accès au fichier mailing en appelant la commande.
+    Par exemple : send-mails /path/to/file.md
+  file_should_exist: |
+    Le fichier '%{path}' est introuvable.
+    Merci de fournir à la commande send-mails le chemin d'un fichier existant.
+  requires_metadata: |
+    Le fichier '%{path}' devrait définir ses métadonnées.
+    Les métadonnées se trouvent en haut du fichier, entre deux '---'
+    et permettent de définir le sujet, les destinataires, etc.
+  requires_message: |
+    Le fichier '%{path}' devrait définir un message (type).
+  requires_subject: |
+    Le fichier '%{path}' devrait définir le sujet du message.
+    Le sujet s'écrit dans les métadonnées avec "Subject = <Le sujet>"
+  requires_sender: |
+    Le fichier '%{path}' devrait définir l'expéditeur du message.
+    L'expéditeur s'écrit dans les métadonnées avec "To = <expéditeur>"
+    Au minimum, c'est un mail (locale@chez.lui) mais on peut aussi 
+    définir le nom et le sexe avec "Prénom NOM,H,locale@chez.lui"
+  requires_receivers: |
+    Le fichier '%{path}' devrait définir les destinataires du message.
+    Les destinataires s'écrivent dans les métadonnées avec "To = <Expéditeurs>"
+    Les expéditeurs peuvent être :
+    - un chemin d'accès vers un fichier .csv valide
+    - un simple mail "Patronyme <mail@chez.lui>"
+    - une liste de ces derniers, entre [...]
+  bad_receiver: |
+    Le fichier '%{path}' définit mal au moins un des destinataires :
+    %{receiver} par la donnée 'To'
+    La donnée 'To' devrait être un chemin d'accès vers un fichier .csv,
+    une adresse mail valide (avec ou sans infos) ou une liste de l'un 
+    et/ou de l'autre.
+  bad_sender: |
+    Le fichier '%{path}' définit mal l'expéditeur du message :
+        %{sender}
+    Il faudrait avoir un mail valide, ou "Patronyme <mail valide>"
+
+receivers:
+  unknown_file: |
+    Le fichier de destinataires '%{path}' est introuvable.
+  bad_extension: |
+    Le fichier de destinataires '%{path}' devrait être un fichier CSV (extension .csv).
+  bad_receivers: |
+    Le fichier de destinataires '%{path}' définit mal les destinataires.
+  bad_data: |
+    Le fichier de destinataires '%{path}' contient de mauvaises données.
+    %{errors}
+  file_requires_header: |
+    Le fichier de destinataires '%{path}' doit posséder une entête définissant les champs.
+    (et notamment le champ 'Mail', mail du destinataire)
+  requires_comma_separator: |
+    Le fichier de destinataires '%{path}' doit utiliser les virgules comme séparateur.
+  data_mail_requires: |
+    Le fichier de destinataires '%{path}' doit définir la données 'Mail'.
+  bad_receiver_in_file: |
+    Le destinataire '%{receiver}' est mal défini dans le fichier
+     '%{path}' : %{error}.
+  bad_receiver: |
+    Le destinataire '%{receiver}' est mal défini :
+    %{error}.
+
+  # --- Depuis une liste de destinataires ---
+
+  bad_list_item: |
+    Le ou les destinataires définis par '%{item}' sont mal définis.
+    Un item de liste doit être un mail, un mail avec patronyme, un
+    fichier CSV bien formaté ou une liste de données séparées par
+    des virgules.
+  bad_list_item_for_exclusion: |
+    Le ou les destinataires à exclure, définis par '%{item}', sont
+    mal définis.
+    Un item de liste doit être un mail, un mail avec patronyme, un
+    fichier CSV bien formaté ou une liste de données séparées par
+    des virgules.
+
+
+  # --- Pour les exclusions ---
+  bad_exclusion: |
+    Impossible d'exclure un destinataire à partir des données :
+    %{exclus}::%{class}. 
+    Cette donnée devrait être soit un destinataire (Receiver), soit
+    le mail lui-même, soit une table définissant la clé 'Mail' avec
+    le mail.
+
+
+receiver:
+  invalid_string_data: |
+    La données '%{data}' pour définir le destinataire est invalide.
+    Il faut soit une donnée type "ligne CSV" avec des données séparées
+    par des virgules, soit une donnée de type "Patronyme <mail valide>".
+  invalid_string_data_as_csv: |
+    La données '%{data}' pour définir un destinataire sous forme de
+    ligne CSV est invalide : je ne sais pas quoi faire de la sous-chaine
+    '%{substr}' (le patronyme est déjà défini avec %{patro})…
+  requires_mail: |
+    Le mail du destinataire est absolument requis.
+  bad_mail: |
+    Le mail '%{mail}' est invalide.
+  bad_sexe: |
+    Le sexe '%{sexe}' n'est pas valide. Il devrait valoir 'H' ou 'F'.

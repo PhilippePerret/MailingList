@@ -126,6 +126,14 @@ messageType:
     autorisée.
     Les extensions autorisées sont %{exts}.
 
+# --- Pour la boite d'expédition ---
+
+sender:
+  receiver_without_message: |
+    Le destinataire de mail %{mail} ne possède pas de message formaté
+    pour lui… Normalement, ça ne devrait être possible que pour les
+    tests ou en cas d'utilisation abusive.
+
 # --- Pour le rapport ---
 
 report:

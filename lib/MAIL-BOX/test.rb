@@ -14,7 +14,10 @@ class MailBoxTest < Minitest::Test
 
   def setup
     super
+    @mailbox = nil
+    @filebox_name = nil
   end
+  
   def teardown
     
   end

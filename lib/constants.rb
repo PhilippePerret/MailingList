@@ -18,5 +18,6 @@ SERVER_DATA = [DSMTP[:server],DSMTP[:port],DSMTP[:domain],DSMTP[:user_name],DSMT
 #
 # Pour les images
 # 
-CODE_IMAGE_TEMPLATE = '<img width="%{width}" style="%{style}" src="data:image/%{format};base64,%{code64}" alt="%{alt}" />'.freeze
+VALID_IMG_EXTNAMES = ['.svg','.jpg','.jpeg','.gif','.png','.tiff']
+CODE_IMAGE_TEMPLATE = '<img style="width:inherit;height:inherit;%{style}" src="data:image/%{format};base64,%{code64}" alt="%{alt}" />'.freeze
 CODE_IMAGE_TEMPLATE_LINKED = ('<a href="%{link}">'+CODE_IMAGE_TEMPLATE+'</a>').freeze

@@ -14,7 +14,7 @@ require_relative 'constants'
 require_relative 'utils'
 
 Dir["#{__dir__}/VPL/**/*.rb"].each{|m|require m}
-
+require_folder('lib/FILE-BOX')
 
 # Pour définir le moteur
 MOTOR = Motor.instance

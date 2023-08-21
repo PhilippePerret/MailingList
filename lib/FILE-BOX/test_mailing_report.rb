@@ -9,7 +9,6 @@ class MailingReportTest < Minitest::Test
     @report = nil
   end
 
-
   def report
     @report ||= begin
       filebox = FileBox.new(filebox_path)

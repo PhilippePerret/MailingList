@@ -70,7 +70,7 @@ class MessageTypeBox
     @variables ||= begin
       raw_code.scan(/\%\{(.+?)\}/).to_a.collect do |var|
         var[0]
-      end.uniq.tap { |liste| debug "variables : #{liste.inspect}" }
+      end.uniq #.tap { |liste| debug "variables : #{liste.inspect}" }
     end
   end
 

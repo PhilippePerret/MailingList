@@ -1,10 +1,10 @@
-# require 'singleton'
 class FileBox
 
   attr_reader :path
 
   def initialize(path = nil)
     @path = path
+    check_file_param(path)
   end
 
   # = main =
@@ -14,15 +14,12 @@ class FileBox
   # C'est la méthode qui réagit à "send-mails path/to/file" dans le
   # Terminal (en fait, c'est le runner.rb qui l'appelle)
   # 
-  # @param file [String] 
-  # 
-  #   Chemin d'accès au fichier définissant le mailing-list
-  # 
   # @param options [Hash]
   # 
   #   Options pour l'envoi. Inutilisé pour le moment.
+  #   Contiendra ensuite les options CLI
   # 
-  def send(file: nil, options: nil)
+  def send(options = nil)
     # 
     # On démarre le rapport
     # 
@@ -30,17 +27,18 @@ class FileBox
     #
     # Premières vérifications du fichier mailing
     # 
-    check_file_param(file || path)
-    check_options_param(options)
+    options = check_options_param(options||{})
     #
     # La boite de mail
     # (partie du moteur qui construit le message final)
     # 
+    require_folder('lib/MAIL-BOX')
     mailbox = MailBox.new(self)
     #
     # La boite d'envoi du message
     # (c'est la partie du moteur qui transmet le message)
     # 
+    require_folder('lib/SENDER-BOX')
     sender = SenderBox.new(self, options)
     # 
     # Fabrication des messages pour chaque destinataire, formaté
@@ -53,6 +51,7 @@ class FileBox
     # Envoi du message au destinataire
     # 
     destinataires.each do |destinataire|
+      report << "- Envoi du mail à #{destinataire.mail}"
       sender.send_to(destinataire)
     end
     #
@@ -64,8 +63,9 @@ class FileBox
     e.draw_motor
     raise e.message # pour utiliser assert_raises dans les tests
   rescue Exception => e
-    puts "ERREUR FATALE : #{e.message}".red
-    puts e.backtrace.join("\n").red
+    STDOUT.write "\n\nERREUR FATALE : #{e.message}\n".red
+    STDOUT.write e.backtrace.join("\n").red + "\n"
+    exit 1
   ensure
     #
     # Arrêt du rapport
@@ -78,7 +78,7 @@ class FileBox
   end
 
   def report
-    @report || MailingReport.new(self)
+    @report ||= MailingReport.new(self)
   end
 
   # @return [Array<Receiver>] La liste des destinataires et seulement

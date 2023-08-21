@@ -21,7 +21,7 @@ class MailingReport
     unless @ok
 
     end
-    add "Début : #{t(@start_time)} — Fin : #{t(@end_time)} — Durée : #{duree} s"
+    add "Début : #{t(start_time)} — Fin : #{t(end_time)} — Durée : #{duree} s"
     puts lines.join("\n").send(@ok ? :vert : :rouge)
   end
 
@@ -33,20 +33,22 @@ class MailingReport
   def start
     @start_time = Time.now.freeze
   end
+
   def stop
     @end_time = Time.now.freeze
   end
+  
+  # Dans le cas où ils ne seraient pas définis
+  def start_time; @start_time ||= Time.now.freeze end
+  def end_time; @end_time ||= Time.now.freeze end
+
   def duree
-    (@end_time - @start_time)
+    (end_time - start_time)
   end
 
   private
 
     def t(time)
       time.strftime('%H:%M:%S')
-    end
-
-    def now_formated
-      Time.now
     end
 end

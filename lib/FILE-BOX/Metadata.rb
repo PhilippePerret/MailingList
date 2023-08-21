@@ -25,8 +25,6 @@ class Metadata
       end
       @data.merge!(key => value)
     end
-    # puts "data = #{@data}"
-    # sleep 4
   end
 
   # Pour pouvoir utiliser @filebox.metadata['To']

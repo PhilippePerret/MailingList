@@ -50,6 +50,11 @@ class Receiver
 
   end #/<< self
 
+  #
+  # Le message final pour le destinataire
+  # 
+  attr_accessor :message
+  
   attr_reader :data
   attr_reader :error
 

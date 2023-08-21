@@ -100,6 +100,13 @@ receiver:
     Le mail '%{mail}' est invalide.
   bad_sexe: |
     Le sexe '%{sexe}' n'est pas valide. Il devrait valoir 'H' ou 'F'.
+  requires_variable: |
+    La variable '%{var}' doit être définie pour le destinataire qui 
+    possède le mail %{mail}.
+    Cette variable peut être une colonne du fichier CSV ou une clé
+    si le destinataire est défini par une table dans 'To =' comme
+    ci-dessous avec la variable 'Var'
+    To = [{'Mail' => "mail@chez.lui", 'Var' => "La variable"}]
 
 
 # --- POur les messages-type du mailing ---
@@ -114,3 +121,7 @@ messageType:
     Je ne peux pas préparer le message-type pour ce mailing. Il faut 
     remettre l'image à cet endroit ou redéfinir la valeur de la 
     variable '%{key}'.
+  image_bad_extname: |
+    L'image '%{name}' de clé '%{key}' ne possède pas une extension 
+    autorisée.
+    Les extensions autorisées sont %{exts}.

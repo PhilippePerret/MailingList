@@ -28,8 +28,7 @@ class FileBox
     # 
     # L'instance (boite) qui gère le message-type
     # 
-    msgtype = MessageTypeBox.new(self)
-    msgtype.check
+    messagetype_box.check
     
   rescue VPLError => e
     e.draw_motor
@@ -39,6 +38,11 @@ class FileBox
     puts e.backtrace.join("\n").red
   end
 
+  # @return le MessageTypeBox (boite de message type) pour le
+  # fichier mailing courant
+  def messagetype_box
+    @messagetype_box ||= MessageTypeBox.new(self)
+  end
 
   # @return les métadonnées
   def metadata

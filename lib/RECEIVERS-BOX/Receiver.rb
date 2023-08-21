@@ -96,7 +96,7 @@ class Receiver
   end
 
   def sexe
-    @sexe ||= data['Sexe']
+    @sexe ||= data['Sexe']||'H'
   end
 
 

@@ -47,9 +47,9 @@ class BuilderHTML
     #
     # Traitement de tous les paragraphes
     # 
-    msgtype_box.paragraphes.collect do |paragraphe|
+    @msgtype_box.paragraphes.collect do |paragraphe|
       "<tr><td style=\"#{td_style}\">" +
-        MessageTypeBox::MarkdownString.new(@msgtype_box,paragraphe).to_html
+        MessageTypeBox::MarkdownString.new(@msgtype_box,paragraphe).to_html +
       "</td></tr>"
     end.join("\n") +
     #

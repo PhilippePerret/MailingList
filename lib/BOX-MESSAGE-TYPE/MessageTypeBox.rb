@@ -13,17 +13,26 @@ class MessageTypeBox
   # @return [String] le message brut tel qu'il se trouve dans le
   # fichier de mailing
   def raw_code
-    @raw_code ||= @filebox.raw_message
+    @raw_code ||= @filebox.raw_message.freeze
+  end
+
+  # @return [String] Le message brut mais où les variables images
+  # ont été remplacées par leur code
+  def raw_code_with_images
+    @raw_code_with_images ||= begin
+      rc = raw_code.dup
+      images.each do |image|
+        rc = rc.gsub(/#{image.key}/, image.to_html)
+      end
+      rc
+    end
   end
 
   # Check la validité du message et de ses informations
-  # Entre autres choses, vérifie que les images soient bien définies
-  # 
+  # Pour le moment :
+  #   - les images sont checkées à leur instanciation
   def check
-    images.each do |img|
-      err = image_ok?(img)
-      err.nil? || raise(err)
-    end
+
   rescue Exception => e
     throw(e.message)
   end
@@ -35,7 +44,7 @@ class MessageTypeBox
   def paragraphes
     @paragraphes ||= begin
       @selectors = {}
-      raw_code.split("\n\n").collect do |parag|
+      raw_code_with_images.split("\n\n").collect do |parag|
         if parag.strip.empty?
           nil
         elsif parag.match?(REG_DEFINITION_CLASS_CSS)
@@ -59,25 +68,22 @@ class MessageTypeBox
   # (tous les destinataires doivent les connaitre)
   def variables
     @variables ||= begin
-      liste = []
-      raw_code.scan(/\%\{(.+?)\}/).to_a.each do |var|
-        liste << var[0]
-      end
-      debug "variables : #{liste.inspect}"
-      liste
+      raw_code.scan(/\%\{(.+?)\}/).to_a.collect do |var|
+        var[0]
+      end.uniq.tap { |liste| debug "variables : #{liste.inspect}" }
     end
   end
 
-  # @return Liste des images utilisées dans le texte
-  # (chacune doit être définie dans les métadonnées)
+  # @return Liste des images [MessageTypeBox::Image] utilisées dans
+  # le texte (chacune doit être définie dans les métadonnées)
   def images
     @images ||= begin
-      liste = []
-      raw_code.scan(/(IMG(?:.+?))\b/).to_a.each do |key_img|
-        liste << key_img[0]
-      end
-      debug "Images: #{liste.inspect}"
-      liste
+      images_keys = []
+      raw_code.scan(/(IMG(?:.+?))\b/).to_a.collect do |key_scan|
+        key_img = key_scan[0]
+        next if images_keys.include?(key_img)
+        MessageTypeBox::Image.new(@filebox, key_img)
+      end.compact
     end
   end
 
@@ -96,23 +102,10 @@ class MessageTypeBox
     # @message_type)
     # 
     def build_and_return_message_type
-      
+      builder = BuilderHTML.new(self)
+      builder.build
     end
 
-    # Vérifie que l'image définie par la clé +key_img+ soit valide
-    # c'est-à-dire :
-    #   - qu'elle soit définie dans les métadonnées du fichier
-    #   - qu'elle corresponde à un fichier image existant
-    def image_ok?(key_img)
-      image_path = @filebox.metadata[key_img]
-      image_path = File.expand_path(File.join(@filebox.folder,image_path)) if image_path && image_path.start_with?('.')
-      debug("image_path = #{image_path.inspect}")
-      image_path              || raise(ERRORS[:messageType][:unknown_image] % {key: key_img})
-      File.exist?(image_path) || raise(ERRORS[:messageType][:unfound_image] % {path: image_path, key: key_img})
-      return nil
-    rescue Exception => e
-      return e.message
-    end
 
 REG_DEFINITION_CLASS_CSS = /\.([a-zA-Z0-9_\-]+) \{(.*)\}$/
 

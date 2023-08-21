@@ -40,4 +40,3 @@ FEMININES = {
     ve:     'f',      # fautif/fauti{ve} | veuf/veu{ve}
   }
 }
-

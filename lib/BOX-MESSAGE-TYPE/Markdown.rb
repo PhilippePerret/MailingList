@@ -31,6 +31,9 @@ class MarkdownString
     
     c = @raw_markdown.dup
 
+    # Titre
+    c = traite_as_titre(c) if c.match?(/^\#{1,7} /)
+
     # Liste
     c = traite_liste_in(c) if c.match?(/^([\*\-]|1\.) /)
 
@@ -58,7 +61,32 @@ class MarkdownString
     # Les retours chariot
     c = c.gsub(/\r?\n/, '<br />')
 
+    # On termine en remplaçant tous les sélecteurs qui peuvent
+    # rester
+    c = remplace_all_selectors(c)
+
     return c
+  end
+
+  # Remplacement des sélecteurs personnalités
+  # 
+  # @rappel
+  #   Dans le fichier mailing, ils sont définis dans le texte, par
+  #   des noms de sélecteurs précédés par des '.'
+  #   Par exemple '.monselecteur'
+  #   Dans le texte, on peut utiliser 
+  #     soit : '<span class="monselecteur">Le texte</span>'
+  #     soit : '<monselecteur>Le texte</monselecteur>'
+  #   C'est le deuxième qu'on doit remplacer ici
+  # 
+  # 
+  def remplace_all_selectors(md)
+    @messagebox.selectors.each do |selector, definition|
+      md = md.gsub(/<#{selector}>(.+?)<\/#{selector}>/) {
+        "<span style=\"#{definition}\">#{$1}</span>"
+      }
+    end
+    return md
   end
 
   # Traitement de la liste que contient le paragraphe
@@ -73,6 +101,21 @@ class MarkdownString
     selector = md.start_with?('1.') ? 'ol' : 'ul'
     md = md.gsub(/^([\*\-]|1\.) (.*)$/, '<li>\2</li>')
     return "<#{selector}>" + md.gsub(/\r?\n/,'') + "</#{selector}>"
+  end
+
+  def traite_as_titre(md)
+    md = md.gsub(/^(\#{1,7}) (.*?)$/) {
+      mark  = $1.freeze
+      titre = $2.strip.freeze
+      tag   = "h#{mark.length}"
+      style = @messagebox.selectors[tag]
+      if style.nil?
+        "<#{tag}>#{titre}</#{tag}>"
+      else
+        "<#{tag} style=\"#{style}\">#{titre}</#{tag}>"
+      end
+    }
+    return md
   end
 
   def get_code_css_of_selector(selector)

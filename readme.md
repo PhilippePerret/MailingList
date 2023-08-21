@@ -9,6 +9,7 @@ Le programme est testé comme un moteur, en VPL.
 C'est du faux markdown. Sont gérés :
 
 * les styles de base, \*\* pour gras, \* pour italique, \_ pour souligné,
+* les titres par `# titre`, `## titre`, etc. — noter qu'ils seront stylés en utilisant les définitions `.h1`, `.h2` etc. (les points avant les "hX" sont impératif, contrairement au CSS pur),
 * les codes ruby (#\{...\}),
 * les '%' isolés sont remplacés par des '%%' pour respecter le template,
 * les variables sont exprimées en `%{nom-variable}`, elles sont remplacées par les données des destinataires,

@@ -1,7 +1,11 @@
 require 'clir'
 
 require 'minitest'
-require "minitest/autorun"
+if defined?(NO_AUTORUN) && NO_AUTORUN
+  # Les tests seront lancés plus tard
+else
+  require "minitest/autorun"
+end
 require 'minitest/color'
 require 'minitest/reporters'
 reporter_options = { 

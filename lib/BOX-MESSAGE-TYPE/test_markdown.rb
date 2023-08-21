@@ -99,4 +99,24 @@ class MarkdownStringTest < Minitest::Test
     expected = "un <span style=\"color:red;font-weight:bold;\">texte rouge</span> et <span style=\"color:green;font-weight:bold;\">vert</span>."
     assert_equal(expected, par.to_html)
   end
+
+  def test_par_selector_customised
+    roug = "color:red;font-weight:bold;"
+    vert = "color:green;font-weight:bold;"
+    par = newpar("<red>En rouge</red> et <green>en vert</green> et <red>autre rouge</red>.")
+    expected = "<span style=\"#{roug}\">En rouge</span> et <span style=\"#{vert}\">en vert</span> et <span style=\"#{roug}\">autre rouge</span>."
+    assert_equal expected, par.to_html
+  end
+
+  def test_titres
+    par = newpar("# Un titre simple")
+    expected = "<h1>Un titre simple</h1>"
+    assert_equal(expected, par.to_html)
+  end
+
+  def test_titre_avec_style_propre
+    par = newpar("## Titre trop stylé")
+    expected = "<h2 style=\"color:ocre;\">Titre trop stylé</h2>"
+    assert_equal(expected, par.to_html)
+  end
 end

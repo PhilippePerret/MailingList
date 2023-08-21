@@ -28,6 +28,33 @@ class MessageTypeBox
     throw(e.message)
   end
 
+
+  # @return [Array<Markdown String>] la liste des paragraphes, mais
+  # seulement ceux contenant du texte à écrire, donc en excluant les
+  # lignes vides et les définitions de style.
+  def paragraphes
+    @paragraphes ||= begin
+      @selectors = {}
+      raw_code.split("\n\n").collect do |parag|
+        if parag.strip.empty?
+          nil
+        elsif parag.match?(REG_DEFINITION_CLASS_CSS)
+          parag.scan(REG_DEFINITION_CLASS_CSS).to_a.each do |selector, definition|
+            @selectors.merge!(selector => definition)
+          end
+          nil
+        else
+          parag
+        end
+      end.compact
+    end
+  end
+
+  # Table [Hash] définissant les sélecteurs CSS (class).
+  def selectors
+    @selectors # définis dans #paragraphes
+  end
+
   # @return Liste des variables utiles pour le texte
   # (tous les destinataires doivent les connaitre)
   def variables
@@ -86,4 +113,7 @@ class MessageTypeBox
     rescue Exception => e
       return e.message
     end
+
+REG_DEFINITION_CLASS_CSS = /\.([a-zA-Z0-9_\-]+) \{(.*)\}$/
+
 end #/class MessageTypeBox

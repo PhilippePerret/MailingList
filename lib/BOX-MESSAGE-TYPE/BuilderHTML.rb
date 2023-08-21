@@ -47,9 +47,9 @@ class BuilderHTML
     #
     # Traitement de tous les paragraphes
     # 
-    paragraphes.collect do |paragraphe|
+    msgtype_box.paragraphes.collect do |paragraphe|
       "<tr><td style=\"#{td_style}\">" +
-      paragraphe
+        MessageTypeBox::MarkdownString.new(@msgtype_box,paragraphe).to_html
       "</td></tr>"
     end.join("\n") +
     #
@@ -72,18 +72,13 @@ class BuilderHTML
 
   private
 
-    def paragraphes
-      @paragraphes ||= begin
-        @msgtype_box.raw_code.split("\n\n")
-      end
-    end
-
     def td_style
       @td_style ||= TD_STYLE % {
         font_family: font_family,
         font_size:   font_size
       }
     end
+
 
 
 TABLE_STYLE = "max-width:840px;width;100%%;"

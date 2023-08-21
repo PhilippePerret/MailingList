@@ -23,12 +23,42 @@ class FileBox
   #   Options pour l'envoi. Inutilisé pour le moment.
   # 
   def send(file: nil, options: nil)
+    # 
+    # On démarre le rapport
+    # 
+    report.start
+    #
+    # Premières vérifications du fichier mailing
+    # 
     check_file_param(file || path)
     check_options_param(options)
+    #
+    # La boite de mail
+    # (partie du moteur qui construit le message final)
     # 
-    # L'instance (boite) qui gère le message-type
+    mailbox = MailBox.new(self)
+    #
+    # La boite d'envoi du message
+    # (c'est la partie du moteur qui transmet le message)
     # 
-    messagetype_box.check
+    sender = SenderBox.new(self, options)
+    # 
+    # Fabrication des messages pour chaque destinataire, formaté
+    # spécialement pour eux
+    # 
+    destinataires.each do |destinataire|
+      destinataire.message = mailbox.build_for_receiver(destinataire)
+    end
+    #
+    # Envoi du message au destinataire
+    # 
+    destinataires.each do |destinataire|
+      sender.send_to(destinataire)
+    end
+    #
+    # Pour indiquer au rapport au que tout s'est bien passé
+    # 
+    report.set_ok
     
   rescue VPLError => e
     e.draw_motor
@@ -36,6 +66,25 @@ class FileBox
   rescue Exception => e
     puts "ERREUR FATALE : #{e.message}".red
     puts e.backtrace.join("\n").red
+  ensure
+    #
+    # Arrêt du rapport
+    # 
+    report.stop
+    #
+    # Affichage du rapport final
+    # 
+    report.display_report
+  end
+
+  def report
+    @report || MailingReport.new(self)
+  end
+
+  # @return [Array<Receiver>] La liste des destinataires et seulement
+  # les destinataires qui doivent recevoir le message.
+  def destinataires
+    @destinataires ||= ReceiversBox.new(self).receivers
   end
 
   # @return le MessageTypeBox (boite de message type) pour le

@@ -109,7 +109,7 @@ receiver:
     To = [{'Mail' => "mail@chez.lui", 'Var' => "La variable"}]
 
 
-# --- POur les messages-type du mailing ---
+# --- Pour les messages-type du mailing ---
 
 messageType:
   unknown_image: |
@@ -125,3 +125,11 @@ messageType:
     L'image '%{name}' de clé '%{key}' ne possède pas une extension 
     autorisée.
     Les extensions autorisées sont %{exts}.
+
+# --- Pour le rapport ---
+
+report:
+  mailing_failed: |
+    Échec de l'envoi du mailing-list
+  mailing_succeeded: |
+    Mailing-list envoyé avec succès

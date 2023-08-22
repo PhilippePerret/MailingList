@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 require_relative '../required'
-require_folder(File.join(APP_FOLDER,'lib','FILE-BOX'))
+require_app_folder('lib/FILE-BOX')
 
 class MailingReportTest < Minitest::Test
 

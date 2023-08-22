@@ -61,8 +61,6 @@ class Receiver
   def initialize(data_init)
     @data = {}
     data_init.each{|k,v| @data.merge!(k.to_s.capitalize => v)}
-    # STDOUT.write "data_init = #{data_init.inspect}::#{data_init.class}".orange
-    # STDOUT.write "@data = #{@data.inspect}::#{@data.class}".orange
   end
 
 
@@ -79,7 +77,7 @@ class Receiver
     not(mail.nil?)               || raise(ERRORS[:receiver][:requires_mail] % {mail: mail})
     mail.match?(REG_SIMPLE_MAIL) || raise(ERRORS[:receiver][:bad_mail] % {mail: mail})
     unless sexe.nil?
-      sexe.match?(/^[HF]$/)        || raise(ERRORS[:receiver][:bad_sexe] % {sexe: sexe})
+      sexe.match?(/^[HF]$/)      || raise(ERRORS[:receiver][:bad_sexe] % {sexe: sexe})
     end
     return true
   rescue Exception => e
@@ -97,13 +95,32 @@ class Receiver
   end
 
   def patronyme
-    @patronyme ||= data['Patronyme']
+    @patronyme ||= begin
+      data['Patronyme'] || "#{prenom} #{nom}".strip
+    end
   end
 
   def sexe
     @sexe ||= data['Sexe']||'H'
   end
 
+  # @return "Patronyme <mail>" si possible
+  def as_to
+    if patronyme
+      "#{patronyme} <#{mail}>"
+    elsif prenom || nom
+      "#{"#{prenom} #{nom}".strip} <#{mail}>"
+    else
+      mail.dup
+    end
+  end
+
+  def nom
+    @nom ||= (data['Nom'] || data['Lastname'] || (get_nom_from_patronyme if data['Patronyme'])).capitalize
+  end
+  def prenom
+    @prenom ||= data['Prenom'] || data['Firstname'] || (get_prenom_from_patronyme if data['Patronyme'])
+  end
 
 private
 
@@ -119,17 +136,17 @@ private
 
 
   def get_nom_from_patronyme
-    return nil if patronyme.nil?
+    return nil if data['Patronyme'].nil?
     decompose_patronyme
     @nom
   end
   def get_prenom_from_patronyme
-    return nil if patronyme.nil?
+    return nil if data['Patronyme'].nil?
     decompose_patronyme
     @prenom
   end
   def decompose_patronyme
-    segs = patronyme.split(' ')
+    segs = data['Patronyme'].split(' ')
     if segs.count == 2
       @prenom, @nom = segs
     else

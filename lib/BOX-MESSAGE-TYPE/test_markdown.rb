@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 require_relative '../required'
 require_relative 'Markdown'
-require_folder(File.join(APP_FOLDER,'lib','FILE-BOX'))
+require_app_folder('lib/FILE-BOX')
 require_folder(__dir__)
 
 class MarkdownStringTest < Minitest::Test

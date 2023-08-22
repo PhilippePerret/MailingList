@@ -2,10 +2,14 @@
 # Pour requérir tout ce qui est utile au programme (sauf les boites)
 # 
 # 
+require 'clir'
 require 'csv'
 require 'yaml'
 require 'base64'
 require 'kramdown'
+
+require_relative 'Supervisor'
+SUPERVISOR << "Lancement programme mailing..."
 
 LANG = 'fr'
 APP_FOLDER = File.dirname(__dir__)
@@ -14,7 +18,7 @@ require_relative 'constants'
 require_relative 'utils'
 
 Dir["#{__dir__}/VPL/**/*.rb"].each{|m|require m}
-require_folder('lib/FILE-BOX')
+require_app_folder('lib/FILE-BOX')
 
 # Pour définir le moteur
 MOTOR = Motor.instance

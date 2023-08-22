@@ -20,6 +20,7 @@ class FileBox
   #   Contiendra ensuite les options CLI
   # 
   def send(options = nil)
+    SUPERVISOR << "-> FileBox.send"
     # 
     # On démarre le rapport
     # 
@@ -32,13 +33,13 @@ class FileBox
     # La boite de mail
     # (partie du moteur qui construit le message final)
     # 
-    require_folder('lib/MAIL-BOX')
+    require_app_folder('lib/MAIL-BOX')
     mailbox = MailBox.new(self)
     #
     # La boite d'envoi du message
     # (c'est la partie du moteur qui transmet le message)
     # 
-    require_folder('lib/SENDER-BOX')
+    require_app_folder('lib/SENDER-BOX')
     sender = SenderBox.new(self, options)
     # 
     # Fabrication des messages pour chaque destinataire, formaté
@@ -48,11 +49,15 @@ class FileBox
       destinataire.message = mailbox.build_for_receiver(destinataire)
     end
     #
-    # Envoi du message au destinataire
+    # Envoi du message aux destinataires
     # 
+    STDOUT.write "\n\n"
     destinataires.each do |destinataire|
-      report << "- Envoi du mail à #{destinataire.mail}"
-      sender.send_to(destinataire)
+      if sender.send_to(destinataire, options)
+        report << "- Message envoyé avec succès à #{destinataire.mail}"
+      else
+        report << "- Échec de l'envoi à #{destinataire.mail}"
+      end
     end
     #
     # Pour indiquer au rapport au que tout s'est bien passé
@@ -63,9 +68,7 @@ class FileBox
     e.draw_motor
     raise e.message # pour utiliser assert_raises dans les tests
   rescue Exception => e
-    STDOUT.write "\n\nERREUR FATALE : #{e.message}\n".red
-    STDOUT.write e.backtrace.join("\n").red + "\n"
-    exit 1
+    SUPERVISOR.fatal_error(e) # exit
   ensure
     #
     # Arrêt du rapport
@@ -143,7 +146,11 @@ class FileBox
     end
 
     def check_options_param(options)
-      
+      options ||= {}
+      options.key?(:simulation) || options.merge!(simulation: CLI.option(:s))
+      options.key?(:delay)      || options.merge!(no_delay: CLI.option(:d))
+
+      return options
     end
 
     # @return true si le fichier définit un message (même court)

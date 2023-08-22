@@ -5,10 +5,10 @@
 # 
 require_relative '../test_helper'
 require_relative '../required'
-require_folder(File.join(APP_FOLDER,'lib','FILE-BOX'))
-require_folder(File.join(APP_FOLDER,'lib','RECEIVERS-BOX'))
-require_folder(File.join(APP_FOLDER,'lib','BOX-MESSAGE-TYPE'))
-require_folder(__dir__)
+require_box_folder('lib/FILE-BOX')
+require_box_folder('lib/RECEIVERS-BOX')
+require_box_folder('lib/BOX-MESSAGE-TYPE')
+require_box_folder(__dir__)
 
 class MailBoxTest < Minitest::Test
 

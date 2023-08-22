@@ -6,8 +6,14 @@ class MessageTypeBox
 
   # @return [String] Le message où ne reste plus qu'à mettre les
   # variables propres aux destinataires
-  def message_type
-    @message_type ||= build_and_return_message_type
+  def msgtype_html
+    @msgtype_html ||= build_and_return_msgtype_html
+  end
+
+  # @return [String] Le message text où ne reste plus qu'à mettre
+  # les variables propres aux destinataires
+  def msgtype_text
+    @msgtype_text ||= build_and_return_msgtype_text
   end
 
   # @return [String] le message brut tel qu'il se trouve dans le
@@ -55,7 +61,13 @@ class MessageTypeBox
         else
           parag
         end
-      end.compact
+      end.compact + ['']
+      # Le dernier paragraphe vide ajouté ci-dessus permet d'afficher
+      # l'image qui se trouverait tout à la fin du message, et qui 
+      # n'apparait pas dans Mail.app de MacOS. Si ça ne fonctionne
+      # pas à tous les coups, on pourra essayer de mettre le code
+      # ci-dessous
+      # end.compact + ['<div style="color:transparent;">- - -</div>']
     end
   end
 
@@ -95,15 +107,26 @@ class MessageTypeBox
 
   private
 
-    # Fabrication du message final, avec tout transformé en HTML et
-    # les images remplacées par leur code brut
+    # Fabrication du message type final, avec tout transformé en HTML
+    # et les images remplacées par leur code brut
     # 
     # @return [String] le code final (qui sera consigné dans 
-    # @message_type)
+    # @msgtype_html)
     # 
-    def build_and_return_message_type
-      builder = BuilderHTML.new(self)
-      builder.build
+    def build_and_return_msgtype_html
+      BuilderHTML.new(self).build
+    end
+
+    # Fabrication du message type final au format text simple, pour
+    # la première partie du mail.
+    # 
+    # @return [String] Le code text final qui sera consigné dans
+    # la variable @msgtype_text.
+    # 
+    def build_and_return_msgtype_text
+      paragraphes.collect do |paragraphe|
+        MarkdownString.new(self,paragraphe).to_text
+      end.join("\n\n")
     end
 
 

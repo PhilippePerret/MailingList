@@ -1,10 +1,15 @@
 
 
-def require_folder(path)
-  path = File.expand_path(File.join(APP_FOLDER,path)) unless File.exist?(path)
-  Dir["#{path}/**/*.rb"].each do |m|
-    next if File.basename(m).match?(/^test/)
-    require m
+def require_app_folder(path)
+  path = File.expand_path(File.join(APP_FOLDER,path))
+  require_folder(path)
+end
+
+def require_box_folder(box_path)
+  box_path = File.expand_path(File.join(APP_FOLDER,box_path)) unless File.exist?(box_path)
+  Dir["#{box_path}/**/*.rb"].each do |fpath|
+    next if File.basename(fpath).start_with?('test')
+    require fpath
   end
 end
 

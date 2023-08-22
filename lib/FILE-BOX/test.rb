@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 require_relative '../required'
-require_folder(__dir__)
+require_box_folder(__dir__)
 
 # # Doit pouvoir recevoir un fichier (path) qui contient les informations nécessaires et suffisantes pour envoyer un mailing-list.
 # 
@@ -72,7 +72,7 @@ class FileBoxTests < Minitest::Test
     pth = File.join(APP_FOLDER,'assets','tests','files','file_with_good_sender_only_mail.md')
     msg = assert_silent { FileBox.new.send(file: pth, options: {simulation:true}) }
     pth = File.join(APP_FOLDER,'assets','tests','files','file_with_good_sender.md')
-    msg = assert_silent { FileBox.new.send(file: pth, options: {simulation:true}) }
+    assert_silent { FileBox.new.send(file: pth, options: {simulation:true}) }
   end
 
   def test_fichier_doit_avoir_message

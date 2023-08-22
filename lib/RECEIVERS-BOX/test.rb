@@ -3,8 +3,8 @@
 # 
 require_relative '../test_helper'
 require_relative '../required'
-require_folder(File.join(APP_FOLDER,'lib','FILE-BOX'))
-require_folder(__dir__)
+require_box_folder('lib/FILE-BOX')
+require_box_folder(__dir__)
 
 
 class ReceiversBoxTest < Minitest::Test

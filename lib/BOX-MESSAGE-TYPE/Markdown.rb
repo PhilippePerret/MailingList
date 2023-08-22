@@ -31,6 +31,9 @@ class MarkdownString
     
     c = @raw_markdown.dup
 
+    # Code ruby
+    c = c.gsub(/#\{(.+?)\}/) { eval($1) }
+
     # Titre
     c = traite_as_titre(c) if c.match?(/^\#{1,7} /)
 
@@ -49,14 +52,14 @@ class MarkdownString
     # aLink
     c = c.gsub(/\[(.+?)\]\((.+?)\)/, '<a href="\2">\1</a>')
 
-    # Code ruby
-    c = c.gsub(/#\{(.+?)\}/) { eval($1) }
-
     # Le signe %
     c = c.gsub(/(\A|[^%{])\%([^%{]|\Z)/, '\1%%\2')
 
     # les classes CSS
     c = c.gsub(/ class=\"(.+?)\"/) { " style=\"#{get_code_css_of_selector($1)}\""}
+
+    # Les lignes
+    c = c.gsub(/\-{3,}/, '<hr />')
 
     # Les retours chariot
     c = c.gsub(/\r?\n/, '<br />')
@@ -64,6 +67,53 @@ class MarkdownString
     # On termine en remplaçant tous les sélecteurs qui peuvent
     # rester
     c = remplace_all_selectors(c)
+
+    return c
+  end
+
+  # Retire toutes les marques de formatage markdown pour produire un
+  # texte simple (plain)
+  # 
+  def to_text
+    
+    c = @raw_markdown.dup
+
+    # Code ruby
+    c = c.gsub(/#\{(.+?)\}/) { eval($1) }
+
+    # Titre
+    # Les laisser tels quels
+
+    # Liste
+    # Les laisser telles quelles
+
+    # Gras
+    c = c.gsub(/\*\*(.*?)\*\*/m, '\1')
+
+    # Italic
+    c = c.gsub(/\*(.*?)\*/m, '\1')
+
+    # Souligné
+    c = c.gsub(/_(.*?)_/m, '\1')
+
+    # aLink
+    c = c.gsub(/\[(.+?)\]\((.+?)\)/, '\1 (\2)')
+
+    # Le signe %
+    c = c.gsub(/\%\%/, '%')
+
+    # Toutes les autres balises HTML
+    c = c.gsub(/<([a-zA-Z]+)(.*?)>(.*?)<\/\1>/, '\3')
+
+    # Les lignes
+    c = c.gsub(/\-\-\-/, '-'*40)
+
+    # Les retours chariot
+    c = c.gsub(/\r?\n/, "\n")
+
+    # On termine en remplaçant tous les sélecteurs qui peuvent
+    # rester
+    # Rien à faire ici, il n'en reste plus
 
     return c
   end

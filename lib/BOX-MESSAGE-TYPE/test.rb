@@ -5,7 +5,7 @@
 # 
 require_relative '../test_helper'
 require_relative '../required'
-require_folder(File.join(APP_FOLDER,'lib','FILE-BOX'))
+require_app_folder('lib/FILE-BOX')
 require_folder(__dir__)
 
 BON_MAILING_PATH = File.join(APP_FOLDER,'assets','tests','files','bon_file_mailing.md')

@@ -1,9 +1,9 @@
 require_relative '../test_helper'
 require_relative '../required'
-require_folder(File.join(APP_FOLDER,'lib','FILE-BOX'))
-require_folder(File.join(APP_FOLDER,'lib','RECEIVERS-BOX'))
-require_folder(File.join(APP_FOLDER,'lib','BOX-MESSAGE-TYPE'))
-require_folder(__dir__)
+require_box_folder('lib/FILE-BOX')
+require_box_folder('lib/RECEIVERS-BOX')
+require_box_folder('lib/BOX-MESSAGE-TYPE')
+require_box_folder(__dir__)
 
 
 class SenderBoxTest < Minitest::Test
@@ -17,9 +17,12 @@ class SenderBoxTest < Minitest::Test
   end
 
   Spy.on_instance_method(SenderBox, :proceed_sending).and_return do |msg,sender,recipient|
-    # @expediteur   = sender
-    # @destinataire = recipient
-    # @message      = msg
+    SenderBoxTest.set(:expediteur,  sender)
+    SenderBoxTest.set(:recipient,   recipient)
+    SenderBoxTest.set(:message,     msg)
+    true
+  end
+  Spy.on_instance_method(SenderBox, :proceed_simulation).and_return do |msg,sender,recipient|
     SenderBoxTest.set(:expediteur,  sender)
     SenderBoxTest.set(:recipient,   recipient)
     SenderBoxTest.set(:message,     msg)
@@ -141,15 +144,15 @@ class SenderBoxTest < Minitest::Test
     @filebox_name = "bon_mailing_complexe.md"
 
     # --- Test ---
-    options = {}
+    options = {simulation: true, delay: false}
     out, err = capture_io { filebox.send(**options) }
 
     # --- Vérifications ---
     # On enregistre le message dans un fichier
-    fname_actual = "test_complexe-#{Time.now.to_i}.html"
+    fname_actual = "test_complexe-#{Time.now.to_i}.eml"
     fpath_actual = path_results(fname_actual)
     File.open(fpath_actual,'wb'){|f|f.write(SenderBoxTest.get(:message))}
-    fpath_expected = path_expecteds("test_complexe.html")
+    fpath_expected = path_expecteds("test_complexe.eml")
     # Les deux fichiers doivent être identiques
     assert FileUtils.identical?(fpath_expected, fpath_actual), "Le message produit pour le message complexe (results/#{fname_actual})\ndevrait correspondre à celui attendu (test_complexe.html)"
     

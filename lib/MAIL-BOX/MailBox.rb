@@ -16,7 +16,8 @@ class MailBox
   # 
   def build_for_receiver(receiver)
     #
-    # Pour mettre toutes les variables
+    # Pour mettre toutes les variables 
+    # (propres au message et féminines)
     # 
     table_valeurs = {}
 
@@ -45,27 +46,33 @@ class MailBox
     #   Symbols, pas des strings.
     # 
     @boxes = :mail_box # pour l'erreur
-    message_final = message_template % table_valeurs
+    body_html = body_html_template % table_valeurs
+    body_text = body_text_template % table_valeurs
     if false
-      debug "message_template = #{message_template.inspect}"
-      debug "\n\nTable valeurs : #{table_valeurs.inspect}"
-      debug "\n\nMESSAGE_FINAL\n#{message_final.inspect}"
+      SUPERVISOR << "body_html = #{body_html}"
+      SUPERVISOR << "body_text = #{body_text}"
     end
 
-    return message_final
+    mail_final = Mail::assemble(receiver, body_html, body_text, @filebox.metadata)
+
+    if true
+      SUPERVISOR << ["mail_final pour #{receiver.mail}", mail_final]
+    end
+
+    return mail_final
 
   rescue Exception => e
-    if false # pour voir précisément le backtrace
-      STDOUT.write e.backtrace.join("\n").orange
-      exit 1
-    end
+    SUPERVISOR.fatal_error(e)
     raise VPLError.new(e.message, @boxes)
   end
 
   # @return [HTMLString] Le code initial, template
   # 
-  def message_template
-    @message_template ||= @filebox.messagetype_box.message_type.freeze
+  def body_html_template
+    @body_html_template ||= @filebox.messagetype_box.msgtype_html.freeze
+  end
+  def body_text_template
+    @body_text_template ||= @filebox.messagetype_box.msgtype_text.freeze
   end
 
   # @return [Array] Liste des variables (raccourci)

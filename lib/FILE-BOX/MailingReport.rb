@@ -16,6 +16,7 @@ class MailingReport
 
   # Affiche le rapport final
   def display_report
+    clear
     add "-"*40
     add ERRORS[:report][@ok ? :mailing_succeeded : :mailing_failed]
     unless @ok

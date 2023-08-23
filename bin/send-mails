@@ -22,34 +22,28 @@ if help?
   clear
   puts <<~TEXT
   #{'*****************************'.bleu}
-  #{'***   Aide de send-mail   ***'.bleu}
+  #{'***   Aide de send-mails  ***'.bleu}
   #{'*****************************'.bleu}
   
-  send-mail est une commande qui permet d'envoyer un mail ou un 
+  #{'send-mails'.jaune} est une commande qui permet d'envoyer un mail ou un 
   mailing à partir d'un unique fichier markdown définissant aussi 
   bien le contenu que les destinataires et les conditions d'envoi.
 
   #{'Usage simple'.bleu}
   #{'------------'.bleu}
 
-      #{'send-mail /path/to/file.md'.jaune}
+      #{'send-mails /path/to/file.md'.jaune}
 
           Procède à l'envoi du mail défini dans file.md à l'adresse
           indiquée.
 
   #{'Ouverture du fichier mail'.bleu}
 
-      #{'send-mail open /path/to/file.md'.jaune}
-
-  #{'Une aide rapide'.bleu}
-
-      #{'send-mail -h'.jaune}
+      #{'send-mails open /path/to/file.md'.jaune}
 
   #{'Ouverture du manuel'.bleu}
 
-      #{'send-mail manuel'.jaune}
-
-      Ajouter l'option #{'-dev'.jaune} pour l'ouvrir en édition.
+      #{'send-mails -h'.jaune}
 
   TEXT
 else
@@ -70,6 +64,13 @@ else
     # 
     mail_file_path = CLI.main_command
     mail_file_path = File.expand_path(mail_file_path) if mail_file_path
-    FileBox.new(mail_file_path).send(**CLI.options)
+    begin
+      FileBox.new(mail_file_path).send(**CLI.options)
+    rescue VPLError => e
+      e.display
+    rescue TTY::Reader::InputInterrupt
+      puts "\n\nAbandon…".bleu
+      exit 1
+    end
   end
 end

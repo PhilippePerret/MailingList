@@ -103,14 +103,26 @@ class ReceiversBox
       case item_list
       when Hash
         add_receiver(item_list)
-      when /\.csv$/ # => un fichier CSV
-        item_list = File.expand_path(File.join(@filebox.folder, item_list)) if item_list.start_with?('.')
+      when /\.csv$/ 
+        #
+        # => un fichier CSV
+        # 
+        item_list = File.expand_path(File.join(@filebox.folder, item_list)) unless File.exist?(item_list)
         get_from_csv(item_list)
-      when /,/      # => une donnée comme une rangée CSV
+      when /,/      
+        # 
+        # => une donnée comme une rangée CSV
+        # 
         add_receiver(Receiver.get_data_from(item_list))
       when REG_MAIL_PATRO
+        #
+        # => Un mail avec patronyme
+        # 
         add_receiver(Receiver.get_data_from(item_list))
       when REG_SIMPLE_MAIL
+        #
+        # => Un simple mail
+        # 
         add_receiver({'Mail' => item_list})
       else
         raise ERRORS[:receivers][:bad_list_item] % {item: item_list.inspect}
@@ -138,6 +150,11 @@ class ReceiversBox
         remove_receiver(receiver_data)
       when REG_SIMPLE_MAIL
         remove_receiver({'Mail' => item_list})
+      when /\.rb\b/
+        #
+        # => Un filtre ruby
+        # 
+        filtre_ruby_destinataires(item_list)
       else
         raise ERRORS[:receivers][:bad_list_item_for_exclusion] % {item: item_list.inspect}
       end

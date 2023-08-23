@@ -33,13 +33,11 @@ class FileBox
     # La boite de mail
     # (partie du moteur qui construit le message final)
     # 
-    require_app_folder('lib/MAIL-BOX')
     mailbox = MailBox.new(self)
     #
     # La boite d'envoi du message
     # (c'est la partie du moteur qui transmet le message)
     # 
-    require_app_folder('lib/SENDER-BOX')
     sender = SenderBox.new(self, options)
     # 
     # Fabrication des messages pour chaque destinataire, formaté
@@ -109,7 +107,7 @@ class FileBox
 
   # @return le message brut, tel qu'il est dans le fichier
   def raw_message
-    @raw_message || begin
+    @raw_message ||= begin
       sp = raw_code.split('---')
       sp.shift # pour enlever la première (vide)
       sp.shift # pour enlever les métadonnées
@@ -132,6 +130,7 @@ class FileBox
     # Dans le cas contraire, produit une erreur fatale.
     def check_file_param(file)
       file || raise(ERRORS[:file_box][:requires_path])
+      file = "#{file}.md" unless file.end_with?('.md')
       File.exist?(file) || raise(ERRORS[:file_box][:file_should_exist] % {path: file})
       @path = file
       file_contains_metadata?       || raise(ERRORS[:file_box][:requires_metadata] % {path: file})
@@ -142,13 +141,13 @@ class FileBox
       metadata.precheck_receivers # produit lui-même les erreurs
       metadata.sender_ok?           || raise(ERRORS[:file_box][:bad_sender] % {path: file, sender:metadata.sender})
     rescue Exception => e
-       raise VPLError.new(e.message, :file_box)
+      raise VPLError.new(e.message, :file_box)
     end
 
     def check_options_param(options)
       options ||= {}
-      options.key?(:simulation) || options.merge!(simulation: CLI.option(:s))
-      options.key?(:delay)      || options.merge!(no_delay: CLI.option(:d))
+      options.key?(:simulation) || options.merge!(simulation: CLI.option(:s)||false)
+      options.key?(:delay)      || options.merge!(delay: !CLI.option(:d))
 
       return options
     end

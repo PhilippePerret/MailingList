@@ -43,6 +43,14 @@ class SenderBox
         proceed_sending(receiver.message, @filebox.metadata.sender, receiver.mail)
       end
 
+    msg_conf = 
+      if ok
+        "#{'[SIMULATION] ' if options[:simulation]} Mail sent to #{receiver.mail}"
+      else
+        "#{'[SIMULATION] ' if options[:simulation]} Fails to send mail to #{receiver.mail}"
+      end
+    SUPERVISOR << msg_conf
+
     return ok
 
   rescue Exception => e

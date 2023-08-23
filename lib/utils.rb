@@ -5,6 +5,8 @@ def require_app_folder(path)
   require_folder(path)
 end
 
+# Charge tous les fichiers de la boite de chemin d'accès relatif
+# ou absolu +box_path+, sauf les fichiers tests.
 def require_box_folder(box_path)
   box_path = File.expand_path(File.join(APP_FOLDER,box_path)) unless File.exist?(box_path)
   Dir["#{box_path}/**/*.rb"].each do |fpath|

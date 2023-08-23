@@ -55,7 +55,7 @@ class MailBox
 
     mail_final = Mail::assemble(receiver, body_html, body_text, @filebox.metadata)
 
-    if true
+    if false
       SUPERVISOR << ["mail_final pour #{receiver.mail}", mail_final]
     end
 

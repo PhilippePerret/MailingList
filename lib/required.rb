@@ -7,6 +7,7 @@ require 'csv'
 require 'yaml'
 require 'base64'
 require 'kramdown'
+require 'net/smtp'
 
 require_relative 'Supervisor'
 SUPERVISOR << "Lancement programme mailing..."
@@ -17,8 +18,12 @@ APP_FOLDER = File.dirname(__dir__)
 require_relative 'constants'
 require_relative 'utils'
 
-Dir["#{__dir__}/VPL/**/*.rb"].each{|m|require m}
-require_app_folder('lib/FILE-BOX')
+require_folder(File.join(__dir__,'VPL'))
+require_box_folder('lib/FILE-BOX')
+require_box_folder('lib/MESSAGE-TYPE-BOX')
+require_box_folder('lib/RECEIVERS-BOX')
+require_box_folder('lib/MAIL-BOX')
+require_box_folder('lib/SENDER-BOX')
 
 # Pour définir le moteur
 MOTOR = Motor.instance

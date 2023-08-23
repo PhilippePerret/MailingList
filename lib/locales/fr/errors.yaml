@@ -64,16 +64,16 @@ receivers:
   # --- Depuis une liste de destinataires ---
 
   bad_list_item: |
-    Le ou les destinataires définis par '%{item}' sont mal définis.
+    Le ou les destinataires définis par %{item} sont mal définis.
     Un item de liste doit être un mail, un mail avec patronyme, un
     fichier CSV bien formaté ou une liste de données séparées par
     des virgules.
   bad_list_item_for_exclusion: |
-    Le ou les destinataires à exclure, définis par '%{item}', sont
+    Le ou les destinataires à exclure, définis par %{item}, sont
     mal définis.
     Un item de liste doit être un mail, un mail avec patronyme, un
-    fichier CSV bien formaté ou une liste de données séparées par
-    des virgules.
+    fichier CSV bien formaté, un filtre ruby ou une liste de toutes
+    ces données séparées par des virgules.
 
 
   # --- Pour les exclusions ---
@@ -133,6 +133,22 @@ sender:
     Le destinataire de mail %{mail} ne possède pas de message formaté
     pour lui… Normalement, ça ne devrait être possible que pour les
     tests ou en cas d'utilisation abusive.
+
+# --- Pour les filtres ---
+filter:
+  file_unfound: |
+    Le fichier ruby du filtre est introuvable à l'adresse '%{path}'.
+  undefined_class_mailing: |
+    Le filtre %{path} devrait définir la classe Mailing…
+  undefined_method_filter: |
+    Le filtre %{path} devrait définir la méthode de classe 
+    Mailing::%{name}.
+  bad_arguments_count: |
+    La méthode de filtre Mailing::%{name} définie par le filtre
+    %{path}
+    devrait pouvoir recevoir %{args} arguments, elle en reçoit
+    %{exp} (en sachant que le premier est la liste des destina-
+    taires actuelle).
 
 # --- Pour le rapport ---
 

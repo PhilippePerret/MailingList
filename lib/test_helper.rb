@@ -16,6 +16,12 @@ Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new(reporter_opti
 
 require 'spy'
 
+# Détruire le fichier log
+def reset_supervisor_log
+  File.delete(supervisor_log_path) if File.exist?(supervisor_log_path)
+end
+def supervisor_log_path; @supervisor_log_path ||= File.join(__dir__,'supervisor.log') end
+
 def path_results(filename)
   return File.join(results_folder, filename)
 end
@@ -25,8 +31,11 @@ end
 def remove_results_folder
   Dir["#{results_folder}/**/*"].each{|fpath| File.delete(fpath) unless File.directory?(fpath)}
 end
+def files_folder
+  @files_folder ||= File.join(APP_FOLDER,'assets','tests','files').freeze
+end
 def results_folder
-  @results_folder ||= File.join(APP_FOLDER,'assets','tests','results')
+  @results_folder ||= File.join(APP_FOLDER,'assets','tests','results').freeze
 end
 def expecteds_folder
   @expecteds_folder ||= File.join(APP_FOLDER,'assets','tests','expecteds')

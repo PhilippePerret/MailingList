@@ -20,25 +20,13 @@ class MailBox
   # 
   def build_for_receiver(receiver)
     #
-    # Pour mettre toutes les variables 
-    # (propres au message et féminines)
-    # 
-    table_valeurs = {}
-
-    #
-    # On ajoute les féminines
-    # 
-    table_valeurs.merge!(FEMININES[receiver.sexe])
-
-    #
-    # Le destinataire doit répondre à toutes les variables
-    # (sinon une erreur fatale est produite)
+    # Le destinataire doit connaitre toutes les variables qui sont
+    # utilisées dans le texte.
+    # (sinon une erreur fatale sera produite)
     # 
     @boxes = [:mail_box, :receivers] # pour l'erreur
     variables.each do |variable|
-      next if table_valeurs.key?(variable.to_sym) # Une féminine
-      receiver.data.key?(variable) || throw_box(ERRORS[:receiver][:requires_variable] % {var:variable, mail:receiver.mail})
-      table_valeurs.merge!(variable.to_sym => receiver.data[variable])
+      receiver.data_template.key?(variable.to_sym) || throw_box(ERRORS[:receiver][:requires_variable] % {var:variable, mail:receiver.mail})
     end
 
     #
@@ -50,13 +38,17 @@ class MailBox
     #   Symbols, pas des strings.
     # 
     @boxes = :mail_box # pour l'erreur
-    body_html = body_html_template % table_valeurs
-    body_text = body_text_template % table_valeurs
+    body_html = body_html_template % receiver.data_template
+    body_text = body_text_template % receiver.data_template
     if false
       SUPERVISOR << "body_html = #{body_html}"
       SUPERVISOR << "body_text = #{body_text}"
     end
 
+    #
+    # Produire le mail final, qui sera un code découpé en lignes
+    # de 70 signes et codé pour le mail
+    # 
     mail_final = Mail::assemble(receiver, body_html, body_text, @filebox.metadata)
 
     if false

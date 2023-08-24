@@ -14,8 +14,8 @@ send-mails <fichier md>[ <options>]
 
 | Description                                |  Options   | Notes                                                        |
 | ------------------------------------------ | :--------: | ------------------------------------------------------------ |
-| Faire une simple simulation de l’envoi     |  **`-s`**  | « s » pour « simulation »                                    |
-| Ne pas laisser de délai entre les messages |  **`-d`**  | « d » pour « délai ». Sinon, un temps aléatoire sera laissé entre chaque message envoyé. |
+| Faire une simple simulation de l’envoi     |  **`-s`**  | « s » pour « simulation ». En mode simulation, les délais entre les envois seront raccourcis et les mails seront enregistrés dans le dossier `tmp/mails` de l’application. |
+| Ne pas laisser de délai entre les messages |  **`-d`**  | « d » pour « délai ». Sinon, un temps aléatoire sera laissé entre chaque message envoyé, pour donner l’impression d’envois réels. |
 | Pour afficher l’aide                       |  **`-h`**  | « h » comme « help », aide en anglais                        |
 | Ouvrir la version éditable du manuel       | **`-dev`** | S’emploie donc avec `send-mail manuel -dev`                  |
 
@@ -23,6 +23,13 @@ send-mails <fichier md>[ <options>]
 
 
 ## Fichiers markdown mailing
+
+Ce fichier constitue l’élément principal de l’application ***Mailing***. C’est un fichier markdown (donc d’extension `.md`) qui définit précisément le mailing. Il est constitué de deux parties :
+
+* les [métadonnées](#metadata),
+* le [message à transmettre](#message).
+
+<a name="metadata"></a>
 
 ### Contenu des métadonnées
 
@@ -35,7 +42,7 @@ Les *métadonnées* sont consignées dans le fichier markdown du mailing, en hau
 <message>
 ~~~
 
-Elles sont constituées de paires `Clé = Valeur` ou la clé commence toujours par une capitale suivie de minuscules.
+Elles sont constituées de paires **`Clé = Valeur`** ou la clé commence toujours par une capitale suivie de minuscules.
 
 #### Définitions obligatoires
 
@@ -43,7 +50,9 @@ Elles sont constituées de paires `Clé = Valeur` ou la clé commence toujours p
 Subject = Le sujet que prendront tous les mails
 ~~~
 
-Ce sujet peut contenir du code ruby dans `#{code}`. Voir [Sujet dynamique](#sujet-dynamique).
+> Noter que les guillemets, quand c’est une simple valeur `String` qui est donnée, ne sont pas obligatoires.
+
+Ce sujet peut contenir du code ruby dans `#{code}` qui sera évalué dans le contexte du destinataire ainsi que des variables destinataires `%{variable}` (par exemple `%{Patronyme}`. Voir [Sujet dynamique](#sujet-dynamique).
 
 ~~~
 From = <mail> # adresse mail de l'expéditeur
@@ -94,6 +103,8 @@ IMGlogo
 ~~~
 
 ---
+
+<a name="message"></a>
 
 ### Contenu du message
 
@@ -481,8 +492,68 @@ Ce format vaut aussi bien pour les fichiers de destinataires que les fichiers d�
 #### Sujet dynamique
 
 ~~~
+---
 Subject = Le sujet du #{Time.now.wday}
+...
+---
+...
 ~~~
+
+Le sujet dynamique peut aussi faire appel au destinataire en invoquant une de ses variables :
+
+~~~
+---
+Subject = Bonjour %{Prenom}, nous sommes un #{Time.now.wday}
+...
+---
+...
+~~~
+
+Mais notez bien, ci-dessus, l’utilisation du `#` (dièse) pour le code ruby (commun à tous les messages) et l’utilisation du `%` (signe pourcentage) pour faire appel à une propriété du destinataire en particulier.
+
+[Expert] On peut également faire un traitement très précis en utilisant du code ruby qui utilise les données du destinataire courant en utilisant le fait que le code est évalué dans le contexte de l’instance `Receiver` du destinataire.
+
+Imaginons par exemple que nous voulions enregistrer un message différent en fonction de la première lettre du nom du destinataire (pour créer trois groupes différents, de A à L, de M à T et de U à Z).
+
+Le sujet final devra ressembler à : « **John, chanceux, vous êtes dans le 2e groupe** »
+
+Dans le fichier mailing, on aura :
+
+~~~
+---
+Subject = %{Prenom}, chanceu%{se}, vous êtes dans le %{indice_groupe} groupe
+To = bons.csv
+From = phil@chez.lui
+---
+Bonjour %{Patronyme}
+
+Le titre précise le groupe dans lequel vous vous trouverez.
+~~~
+
+Si l’on lance ce mailing, il produit une erreur en précisant que la méthode `indice_groupe` est inconnue de la classe `Receiver`. Il nous faut préciser cette méthode.
+
+Le fichier mailing s’appelant `mon_mailing.md`, nous cherchons un fichier s’appelant `mon_mailing.rb` au même niveau que le fichier mailing. Ce fichier contient :
+
+~~~
+# mon_mailing.rb
+class Receiver
+	
+	# Cette méthode va retourner l'indice du groupe
+	def indice_groupe
+		premiere_lettre = nom[0]
+		if premiere_lettre.match?(/[A-L]/)
+			"1er"
+		elsif premiere_lettre.match?(/[M-T]/)
+			"2e"
+		else
+			"3e"
+		end
+	end
+	
+end
+~~~
+
+Cette fois, le mailing pourra être envoyé, avec le bon titre.
 
 ---
 

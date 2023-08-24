@@ -35,15 +35,10 @@ class FileBox
     # 
     options = check_options_param(options||{})
     #
-    # La boite de mail
-    # (partie du moteur qui construit le message final)
+    # Si le mailing est accompagné d'un module (même affixe et .rb)
+    # on le charge
     # 
-    mailbox = MailBox.new(self)
-    #
-    # La boite d'envoi du message
-    # (c'est la partie du moteur qui transmet le message)
-    # 
-    sender = SenderBox.new(self, options)
+    load_own_module if own_module?
     # 
     # Fabrication des messages pour chaque destinataire, formaté
     # spécialement pour eux
@@ -69,6 +64,22 @@ class FileBox
     
   end
 
+  # Instance de la mail-box
+  # (partie du moteur qui construit le message final)
+  # 
+  def mailbox
+    @mailbox ||= MailBox.new(self)
+  end
+
+  # Instance de la boite d'envoi du message
+  # (c'est la partie du moteur qui transmet concrètement le message)
+  # 
+  def sender
+    @sender ||= SenderBox.new(self, options)    
+  end
+
+  # Instance du rapport
+  # 
   def report
     @report ||= MailingReport.new(self)
   end
@@ -106,6 +117,12 @@ class FileBox
     end
   end
 
+  # Requérir le module personnel (s'il existe)
+  def load_own_module
+    SUPERVISOR << "Chargement du module #{affixe}.rb…"
+    load own_module_path
+  end
+
   # 
   # === Données fixes ===
   # 
@@ -114,6 +131,9 @@ class FileBox
     @folder ||= File.dirname(path)
   end
 
+  def affixe
+    @affixe ||= File.basename(path, File.extname(path))
+  end
 
   private
 
@@ -151,5 +171,21 @@ class FileBox
     # @return true Si le fichier définit des métadonnées
     def file_contains_metadata?
       raw_code.start_with?('---') && raw_code.split('---').count >= 3
+    end
+
+
+
+    # --- Méthodes concernant le module personnel ---
+
+    # @return true si le fichier mailing possède son propre module
+    # (même affixe et extension ruby)
+    def own_module?
+      File.exist?(own_module_path)
+    end
+
+
+    # Chemin d'accès au module ruby personnel (s'il existe)
+    def own_module_path
+      @own_module_path ||= File.join(folder, "#{affixe}.rb")
     end
 end

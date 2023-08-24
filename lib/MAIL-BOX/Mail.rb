@@ -29,7 +29,7 @@ def assemble(recipient, body_html, body_text, metadata)
     message_id:     message_id,
     sender:         metadata.sender,
     boundary:       boundary,
-    subject:        metadata.subject,
+    subject:        subject_for_recipient(metadata.subject, recipient), 
     universal_identifier: universal_identifier,
     date_mail:      date_mail,
     message:        body_html,
@@ -40,7 +40,30 @@ def assemble(recipient, body_html, body_text, metadata)
   return cmail
 
 rescue Exception => e
-  VPLError.new(e.message, :mail_box)
+  raise VPLError.new(e.message, :mail_box)
+end
+
+# --- Méthodes de traitement ---
+
+# @return le sujet du message (Subject) établi précisément pour le
+# destinataire.
+# 
+# @param subject [String]
+# 
+#   Le sujet du message tel que défini (exactement) dans le fichier
+#   de mailing (donc avec toutes ses variables non remplacées)
+# 
+# @param recipient [Receiver]
+# 
+#   L'instance du destinataire
+# 
+def subject_for_recipient(subject, recipient)
+  s = subject.dup
+  s = s.gsub(/\#\{(.*?)\}/){
+    code = $1.freeze
+    eval(code, recipient.bind)
+  }
+  return s % recipient.data_template
 end
 
 # --- Données propres au mail ---

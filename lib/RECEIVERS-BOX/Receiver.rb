@@ -63,6 +63,44 @@ class Receiver
     data_init.each{|k,v| @data.merge!(k.to_s.capitalize => v)}
   end
 
+  # @return [Hash] La table des variables template du destinataire
+  # Elles se compose des féminines (en fonction du sexe) et de toutes
+  # les valeurs définies dans @data, qui produiront des clés minuscules,
+  # (:variable), majuscules (:VARIABLE), titrées ou identiques à la
+  # définition (:Variable)
+  def data_template
+    @data_template ||= begin
+      h = {}
+      #
+      # Les féminines
+      # 
+      h.merge!(FEMININES[sexe])
+      #
+      # Les variables définies dans le fichier CSV (ou la table
+      # fournie pour le destinataire)
+      # 
+      data.each do |k, v|
+        h.merge!(
+          k.to_sym                => v,
+          k.to_s.upcase.to_sym    => v.upcase,
+          k.to_s.downcase.to_sym  => v.downcase
+        )
+      end
+      #
+      # Quelques autres variables calculées, en fonction de ce qui
+      # est connu
+      # 
+      h.merge!(
+        Prenom: prenom,
+        Nom:    nom,
+        Age:    age,
+      )
+      #
+      # Valeur "retournée"
+      # 
+      h
+    end
+  end
 
   # Méthode qui retourne true si les données sont valides
   # Cette méthode ne teste que la validité "générale", en dehors de
@@ -89,6 +127,11 @@ class Receiver
   #
   # === Données accessibles directement ===
   # 
+  # 
+
+  def bind
+    binding()
+  end
 
   def mail
     @mail ||= data['Mail']
@@ -115,11 +158,25 @@ class Receiver
     end
   end
 
+  # 
+  # --- Variable volatiles ---
+  # 
+
   def nom
     @nom ||= (data['Nom'] || data['Lastname'] || (get_nom_from_patronyme if data['Patronyme'])).capitalize
   end
+  
   def prenom
     @prenom ||= data['Prenom'] || data['Firstname'] || (get_prenom_from_patronyme if data['Patronyme'])
+  end
+
+  def age
+    @age ||= begin
+      annee = data['Naissance'] || data['Birthyear']
+      if annee
+        Time.now.year - annee.to_i
+      end
+    end
   end
 
 private

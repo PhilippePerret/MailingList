@@ -480,12 +480,28 @@ Les **variables destinataires** s’inscrivent à l’aide de **`%{variable}`**.
 
 Parmi les variables générales, on trouve :
 
-| Description               | Variable           | Note                                    |
-| ------------------------- | ------------------ | --------------------------------------- |
-| Patronyme du destinataire | **`%{Patronyme}`** | Noter la capitale, indispensable        |
-| Mail du destinataire      | **`%{Mail}`**      |                                         |
-| Prénom du destinataire    | **`%{Prenom}`**    | Si défini ou si le patronyme est défini |
-| Nom du destinataire       | **`%{Nom}`**       | Si défini ou si le patronyme est défini |
+| Description                        | Variable           | Note                                    |
+| ---------------------------------- | ------------------ | --------------------------------------- |
+| Patronyme du destinataire          | **`%{Patronyme}`** | Noter la capitale, indispensable        |
+| Mail du destinataire               | **`%{Mail}`**      |                                         |
+| Prénom du destinataire             | **`%{Prenom}`**    | Si défini ou si le patronyme est défini |
+| Nom du destinataire                | **`%{Nom}`**       | Si défini ou si le patronyme est défini |
+| **Toutes les variables féminines** |                    |                                         |
+| Madame/Monsieur                    | **`%{Madame}`**    |                                         |
+| (rien)/e                           | **`%{e}`**         | fort/forte                              |
+| a/on                               | **`%{a}`**         | mon / ma                                |
+| elle/il                            | **`%{elle}`**      |                                         |
+| et/ette                            | **`%{ette}`**      | sujet/sujette                           |
+| er/ère                             | **`%{ere}`**       | première/première                       |
+| ef/ève                             | **`%{eve}`**       | bref/brève                              |
+| f/ve                               | **`%{ve}`**        | veuf/veuve                              |
+| la/le                              | **`%{la}`**        |                                         |
+| (rien)/ne                          | **`%{ne}`**        | bon/bonne                               |
+| eur/rice                           | **`%{rice}`**      | correcteur/correctrice                  |
+| x/se                               | **`%{se}`**        | heureux/heureuse                        |
+| ec/èche                            | **`%{eche}`**      | sec/sèche                               |
+| l/lle                              | **`%{lle`**        | bel/belle                               |
+| (rien)/sse                         | **`%{sse}`**       | maitre/maitresse                        |
 
 ##### Variables par colonne CSV
 

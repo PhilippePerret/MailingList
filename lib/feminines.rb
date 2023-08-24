@@ -6,14 +6,14 @@ FEMININES = {
     e:      'e',     # fort/fort{e}
     eche:   'èche',  # sec/s{èche}
     elle:   'elle',
-    ere:    'ère',
+    ere:    'ère',   # premier/première
     ette:   'ette', # sujet/suj{ette}
     eve:    'ève',   # bref/br{ève}
     ine:    'ine',    # certa{in}/ certaine
     la:     'la',     # le/la
     lle:    'lle',    # bel/be{lle}
-    madame: 'Madame',
-    ne:     'ne',
+    Madame: 'Madame',
+    ne:     'ne',     # bon/bonne
     rice:   'rice',   # correcteur/correct{rice}
     se:     'se',     # heureux/heureuse
     sse:    'sse',    # maitre/maitre{sse}
@@ -31,7 +31,7 @@ FEMININES = {
     ine:    'in',     # certa{in}/ certaine
     la:     'le',     # le/la
     lle:    'l',      # bel/be{lle}
-    madame: 'Monsieur',
+    Madame: 'Monsieur',
     ne:     '',
     rice:   'eur',    # correcteur/correct{rice}
     se:     'x',      # heureux/heureuse

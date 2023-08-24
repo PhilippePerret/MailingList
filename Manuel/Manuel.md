@@ -19,7 +19,9 @@ send-mails <fichier md>[ <options>]
 | Pour afficher l’aide                       |  **`-h`**  | « h » comme « help », aide en anglais                        |
 | Ouvrir la version éditable du manuel       | **`-dev`** | S’emploie donc avec `send-mail manuel -dev`                  |
 
+---
 
+<a name="mailing-file"></a>
 
 
 ## Fichiers markdown mailing
@@ -82,7 +84,7 @@ Excludes = <définition des exclusions>
 
 On peut définir ces exclusions de plusieurs manières, [de la même façon que les destinataires](#define-destinataires). Voir aussi [Définition des exclusions](#define-exclusions).
 
-On peut aussi définir **les images** qui seront utilisées dans le texte. Une image utilisée dans le texte possède toujours un identifiant de la forme `IMG<id>`. Par exemple `IMGlogo`. Dans l’entête, on doit absolument définir son chemin d’accès relatif ou absolu.
+Dans les métadonnées, on peut aussi définir **les images** qui seront utilisées dans le texte. Une image utilisée dans le texte possède toujours un identifiant de la forme `IMG<id>`. Par exemple `IMGlogo`. Dans l’entête, on doit absolument définir son chemin d’accès relatif ou absolu.
 
 ~~~
 IMG<id image> = <path absolu ou relatif à l'image>
@@ -219,6 +221,8 @@ La seule différence, pour les exclusions, est qu’on n’a besoin que de l’a
 ~~~
 Excludes = ["<mail 1>", "<mail 2>", etc.]
 ~~~
+
+<a name="excludes-per-filter"></a>
 
 #### Exclusions par filtrage
 
@@ -459,6 +463,58 @@ On peut ensuite utiliser des images, en les définissant dans l’entête.
 
 > Noter dès à présent qu’on peut définir très précisément la position et la taille d’une image en utilisant les [styles](#define-styles) comme c’est montré [dans l’annexe](#define-image-with-styles).
 
+<a name="variables-in-message"></a>
+
+#### Les variables
+
+Les variables dans le message à envoyer peuvent être de deux natures :
+
+* [Expert] variables ruby évaluées comme telles, une fois pour toutes quel que soit le destinataire,
+* variables destinataire évaluées à la construction du mail pour le destinataire.
+
+[Expert] Les **variables ruby** s’inscrivent comme en ruby à l’aide de `#{code à évaluer}`.
+
+Les **variables destinataires** s’inscrivent à l’aide de **`%{variable}`**. 
+
+##### Variables communes
+
+Parmi les variables générales, on trouve :
+
+| Description               | Variable           | Note                                    |
+| ------------------------- | ------------------ | --------------------------------------- |
+| Patronyme du destinataire | **`%{Patronyme}`** | Noter la capitale, indispensable        |
+| Mail du destinataire      | **`%{Mail}`**      |                                         |
+| Prénom du destinataire    | **`%{Prenom}`**    | Si défini ou si le patronyme est défini |
+| Nom du destinataire       | **`%{Nom}`**       | Si défini ou si le patronyme est défini |
+
+##### Variables par colonne CSV
+
+On peut ensuite avoir n’importe quelle variable qui serait définie dans le fichier CSV des destinataires. **La variable correspond alors au nom de la colonne**. Par exemple, si le fichier CSV des destinataires contient l’entête :
+
+~~~csv
+Id,Mail,Patronyme,Fonction,Annee
+~~~
+
+… alors on pourra utiliser dans le message (et dans le sujet) les variables `%{Fonction}` et`%{Annee}`.
+
+<a name="variable-per-custom-method"></a>
+
+##### Variables par méthode personnalisées [Expert]
+
+[Expert] On peut ensuite définir des variables ruby (qui sont en fait des méthodes) dans le [module propre au mailing](#mailing-own-module). Il suffit de les définir comme des méthodes d’instances de la classe `Receiver`. 
+
+Par exemple :
+
+~~~
+class Receiver
+	def ma_custom_variable
+		# Retourne la valeur calculée pour le destinataire
+	end
+end
+~~~
+
+… permettra d’utiliser la variable **`%{ma_custom_variable}`** dans le message (ou le sujet).
+
 
 
 ---
@@ -482,6 +538,54 @@ Prénome NOM,autremail@chez.elle,F
 ~~~
 
 Ce format vaut aussi bien pour les fichiers de destinataires que les fichiers d’exclusion.
+
+---
+
+<a name="mailing-own-module"></a>
+
+## Module propre au mailing [Expert]
+
+[Expert] Les experts en ruby peuvent utiliser un module (donc ruby) pour gérer :
+
+* les filtres,
+* les variables personnalisées.
+
+Le *module propre au mailing* est simplement un module ruby (donc un fichier `.rb`) qui porte le même nom (l’affixe, en fait) que le [fichier markdown du mailing](#mailing-file) et se trouve au même niveau. Par exemple :
+
+~~~
+mon_dossier/autre_dossier/fichier_mailing.md
+mon_dossier/autre_dossier/fichier_mailing.rb   # son module propre
+~~~
+
+Dans ce fichier, on pourra définir les variables par :
+
+~~~
+# in fichier_mailing.rb
+class Receiver
+
+	def ma_variable
+	end
+
+end
+~~~
+
+Pour le détail, voir [Variables par méthode personnalisée](#variable-per-custom-method).
+
+Et on pourra définir les filtres par :
+
+~~~
+# in fichier_mailing.rb
+class Mailing
+	def une_methode_de_filtre(recipients)
+		# traitement de recipients
+		# ....
+		return recipients
+	end
+~~~
+
+Pour le détail, voir [Exclusions par filtrage](#excludes-per-filter).
+
+---
 
 ## Annexes
 
@@ -532,7 +636,7 @@ Le titre précise le groupe dans lequel vous vous trouverez.
 
 Si l’on lance ce mailing, il produit une erreur en précisant que la méthode `indice_groupe` est inconnue de la classe `Receiver`. Il nous faut préciser cette méthode.
 
-Le fichier mailing s’appelant `mon_mailing.md`, nous cherchons un fichier s’appelant `mon_mailing.rb` au même niveau que le fichier mailing. Ce fichier contient :
+Le fichier mailing s’appelant `mon_mailing.md`, le programme recherche un fichier s’appelant `mon_mailing.rb` au même niveau que le fichier mailing. Ce fichier contient :
 
 ~~~
 # mon_mailing.rb

@@ -20,16 +20,6 @@ class MailBox
   # 
   def build_for_receiver(receiver)
     #
-    # Le destinataire doit connaitre toutes les variables qui sont
-    # utilisées dans le texte.
-    # (sinon une erreur fatale sera produite)
-    # 
-    @boxes = [:mail_box, :receivers] # pour l'erreur
-    variables.each do |variable|
-      receiver.data_template.key?(variable.to_sym) || throw_box(ERRORS[:receiver][:requires_variable] % {var:variable, mail:receiver.mail})
-    end
-
-    #
     # On peut remplacer les variables pour finaliser le message
     # et le retourner
     # 
@@ -38,8 +28,8 @@ class MailBox
     #   Symbols, pas des strings.
     # 
     @boxes = :mail_box # pour l'erreur
-    body_html = body_html_template % receiver.data_template
-    body_text = body_text_template % receiver.data_template
+    body_html = receiver.eval_template(body_html_template)
+    body_text = receiver.eval_template(body_text_template)
     if false
       SUPERVISOR << "body_html = #{body_html}"
       SUPERVISOR << "body_text = #{body_text}"

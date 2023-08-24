@@ -107,6 +107,7 @@ receiver:
     si le destinataire est défini par une table dans 'To =' comme
     ci-dessous avec la variable 'Var'
     To = [{'Mail' => "mail@chez.lui", 'Var' => "La variable"}]
+    Ça peut être aussi une méthode personnalisée de Receiver.
 
 
 # --- Pour les messages-type du mailing ---

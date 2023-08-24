@@ -63,7 +63,7 @@ def subject_for_recipient(subject, recipient)
     code = $1.freeze
     eval(code, recipient.bind)
   }
-  return s % recipient.data_template
+  return recipient.eval_template(s)
 end
 
 # --- Données propres au mail ---

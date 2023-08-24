@@ -63,6 +63,22 @@ class Receiver
     data_init.each{|k,v| @data.merge!(k.to_s.capitalize => v)}
   end
 
+  # Méthode qui évalue avec le destinataire toutes les valeurs
+  # %{...} du +str+ fourni (qui peut être le mail ou le sujet)
+  # 
+  def eval_template(str)
+    str.gsub(/\%\{(.+?)\}/) {
+      variable_name = $1.to_sym.freeze
+      if data_template.key?(variable_name)
+        data_template[variable_name]
+      elsif self.respond_to?(variable_name)
+        self.send(variable_name)
+      else
+        raise VPLError.new(ERRORS[:receiver][:requires_variable] % {var: variable_name, mail: self.mail})
+      end
+    }
+  end
+
   # @return [Hash] La table des variables template du destinataire
   # Elles se compose des féminines (en fonction du sexe) et de toutes
   # les valeurs définies dans @data, qui produiront des clés minuscules,

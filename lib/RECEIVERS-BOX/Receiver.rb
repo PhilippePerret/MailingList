@@ -74,7 +74,7 @@ class Receiver
       elsif self.respond_to?(variable_name)
         self.send(variable_name)
       else
-        raise VPLError.new(ERRORS[:receiver][:requires_variable] % {var: variable_name, mail: self.mail})
+        raise VPLError.new(ERRORS[:receiver][:requires_variable] % {var: variable_name, mail: self.mail}, :receivers)
       end
     }
   end

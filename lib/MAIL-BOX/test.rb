@@ -36,45 +36,45 @@ class MailBoxTest < Minitest::Test
     @filebox_name || 'bon_mailing_for_mailbox.md'
   end
 
-  # def test_existence_class
-  #   assert defined?(MailBox)
-  # end
+  def test_existence_class
+    assert defined?(MailBox)
+  end
 
-  # def test_existence_methods
-  #   assert_respond_to( mailbox, :build_for_receiver)
-  # end
+  def test_existence_methods
+    assert_respond_to( mailbox, :build_for_receiver)
+  end
 
-  # def test_mailbox_raise_si_manque_variable
-  #   @filebox_name = 'mailing_for_mailbox_lake_variable.md'
-  #   receiver = Receiver.new({'Mail' => "mon@mail.com", 'Patronyme' => "Prénom ET NOM"})
-  #   e = assert_raises { mailbox.build_for_receiver(receiver) }
-  #   e.display
-  # end
+  def test_mailbox_raise_si_manque_variable
+    @filebox_name = 'mailing_for_mailbox_lake_variable.md'
+    receiver = Receiver.new({'Mail' => "mon@mail.com", 'Patronyme' => "Prénom ET NOM"})
+    e = assert_raises { mailbox.build_for_receiver(receiver) }
+    e.display
+  end
 
-  # def test_mailbox_produit_un_mail_final_avec_un_destinataire
-  #   @filebox_name = 'bon_mailing_for_mailbox.md'
-  #   receiver = Receiver.new({'Mail' => "mon@mail.com", 'Patronyme' => "Prénom ET NOM", 'Fonction' => "Directeur"})
-  #   mail = nil
-  #   assert_silent { mail = mailbox.build_for_receiver(receiver) }
-  #   refute_nil(mail)
-  #   assert_match(/^<\!DOCTYPE html>/, mail)
-  #   assert_match(/<html>$/, mail)
-  #   assert_match(/Bonjour Monsieur Pr=C3=A9nom ET NOM,/, mail)
-  #   assert_match(/la fonction de Directeur/, mail)
-  #   # Les images doivent avoir été remplacées
-  #   refute_match(/IMGlogo/, mail)
-  #   refute_match(/IMGlivre/, mail)
-  # end
+  def test_mailbox_produit_un_mail_final_avec_un_destinataire
+    @filebox_name = 'bon_mailing_for_mailbox.md'
+    receiver = Receiver.new({'Mail' => "mon@mail.com", 'Patronyme' => "Prénom ET NOM", 'Fonction' => "Directeur"})
+    mail = nil
+    assert_silent { mail = mailbox.build_for_receiver(receiver) }
+    refute_nil(mail)
+    assert_match(/^<\!DOCTYPE html>/, mail)
+    assert_match(/<html>$/, mail)
+    assert_match(/Bonjour monsieur Pr=C3=A9nom ET NOM,/, mail)
+    assert_match(/de Directeur/, mail)
+    # Les images doivent avoir été remplacées
+    refute_match(/IMGlogo/, mail)
+    refute_match(/IMGlivre/, mail)
+  end
 
-  # def test_on_peut_utiliser_variables_dans_sujet
-  #   @filebox_name = 'mailing_with_sujet_dynamique.md'
-  #   receiver = Receiver.new({'Mail' => "mon@mail.com", 'Patronyme' => "Marcel DUCHAMP", 'Fonction' => "Directeur"})
-  #   mail = nil
-  #   assert_silent { mail = mailbox.build_for_receiver(receiver) }
-  #   refute_nil(mail)
-  #   weekday = Time.now.strftime('%A')
-  #   assert_match("Subject: Bonjour Marcel, nous sommes un #{weekday}, DUCHAMP", mail)
-  # end
+  def test_on_peut_utiliser_variables_dans_sujet
+    @filebox_name = 'mailing_with_sujet_dynamique.md'
+    receiver = Receiver.new({'Mail' => "mon@mail.com", 'Patronyme' => "Marcel DUCHAMP", 'Fonction' => "Directeur"})
+    mail = nil
+    assert_silent { mail = mailbox.build_for_receiver(receiver) }
+    refute_nil(mail)
+    weekday = Time.now.strftime('%A')
+    assert_match("Subject: Bonjour Marcel, nous sommes un #{weekday}, DUCHAMP", mail)
+  end
 
   def test_on_peut_utiliser_methode_personnalisee_du_destinataire
     #

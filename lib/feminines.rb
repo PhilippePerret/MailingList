@@ -13,6 +13,7 @@ FEMININES = {
     la:     'la',     # le/la
     lle:    'lle',    # bel/be{lle}
     Madame: 'Madame',
+    madame: 'madame',
     ne:     'ne',     # bon/bonne
     rice:   'rice',   # correcteur/correct{rice}
     se:     'se',     # heureux/heureuse
@@ -32,6 +33,7 @@ FEMININES = {
     la:     'le',     # le/la
     lle:    'l',      # bel/be{lle}
     Madame: 'Monsieur',
+    madame: 'monsieur',
     ne:     '',
     rice:   'eur',    # correcteur/correct{rice}
     se:     'x',      # heureux/heureuse

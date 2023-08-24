@@ -16,7 +16,6 @@ class MailingReport
 
   # Affiche le rapport final
   def display_report
-    clear
     add "-"*40
     add ERRORS[:report][@ok ? :mailing_succeeded : :mailing_failed]
     unless @ok
@@ -24,6 +23,7 @@ class MailingReport
     end
     add "Début : #{t(start_time)} — Fin : #{t(end_time)} — Durée : #{duree} s"
     puts lines.join("\n").send(@ok ? :vert : :rouge)
+    puts "\n\n"
   end
 
   # Si tout s'est bien passé, on appelle cette méthode

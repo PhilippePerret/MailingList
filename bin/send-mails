@@ -65,12 +65,28 @@ else
     mail_file_path = CLI.main_command
     mail_file_path = File.expand_path(mail_file_path) if mail_file_path
     begin
-      FileBox.new(mail_file_path).send(**CLI.options)
+      filebox = FileBox.new(mail_file_path)
+      filebox.send(**CLI.options)
     rescue VPLError => e
-      e.display
+      #
+      # Arrêt du rapport
+      # 
+      filebox.report.stop
+      #
+      # Affichage de l'erreur dans le moteur
+      # 
+      clear
+      e.draw_motor
+      #
+      # Affichage du rapport final
+      # 
+      filebox.report.display_report
+
     rescue TTY::Reader::InputInterrupt
       puts "\n\nAbandon…".bleu
       exit 1
+    rescue Exception => e
+      SUPERVISOR.fatal_error(e)
     end
   end
 end

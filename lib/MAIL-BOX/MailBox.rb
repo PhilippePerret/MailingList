@@ -5,6 +5,10 @@ class MailBox
     @filebox = filebox
   end
 
+  def throw_box(err_mess)
+    raise VPLError.new(err_mess, @boxes || :mail_box)
+  end
+
   # = main =
   # 
   # Construit le message final (à envoyer) pour le destinataire
@@ -33,7 +37,7 @@ class MailBox
     @boxes = [:mail_box, :receivers] # pour l'erreur
     variables.each do |variable|
       next if table_valeurs.key?(variable.to_sym) # Une féminine
-      receiver.data.key?(variable) || raise(ERRORS[:receiver][:requires_variable] % {var:variable, mail:receiver.mail})
+      receiver.data.key?(variable) || throw_box(ERRORS[:receiver][:requires_variable] % {var:variable, mail:receiver.mail})
       table_valeurs.merge!(variable.to_sym => receiver.data[variable])
     end
 
@@ -61,9 +65,6 @@ class MailBox
 
     return mail_final
 
-  rescue Exception => e
-    SUPERVISOR.fatal_error(e)
-    raise VPLError.new(e.message, @boxes)
   end
 
   # @return [HTMLString] Le code initial, template

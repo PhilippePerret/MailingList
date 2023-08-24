@@ -19,7 +19,7 @@ class ReceiversBox
     # 
     # Le fichier doit exister
     # 
-    File.exists?(filter_path) || raise(ERRORS[:filter][:file_unfound] % {path:filter_path})
+    File.exists?(filter_path) || throw_box(ERRORS[:filter][:file_unfound] % {path:filter_path})
     #
     # On déduit du nom du fichier le nom de la méthode
     # 
@@ -36,10 +36,9 @@ class ReceiversBox
     #
     # Vérification des données
     # 
-    defined?(Mailing) || raise(ERRORS[:filter][:undefined_class_mailing] % {path: filter_path})
-    Mailing.respond_to?(method_name) || raise(ERRORS[:filter][:undefined_method_filter] % {path: filter_path, name: method_name})
-    nombre_arguments_methode = Mailing.method(method_name).arity
-    Mailing.method(method_name).arity == args.count || raise(ERRORS[:filter][:bad_arguments_count] % {name: method_name, path: filter_path, exp: nombre_arguments_methode, args: args.count})
+    defined?(Mailing)                       || throw_box(ERRORS[:filter][:undefined_class_mailing] % {path: filter_path})
+    Mailing.respond_to?(method_name)        || throw_box(ERRORS[:filter][:undefined_method_filter] % {path: filter_path, name: method_name})
+    nb_params(method_name) == args.count    || throw_box(ERRORS[:filter][:bad_arguments_count] % {name: method_name, path: filter_path, nb_args_method: nb_params(method_name), nb_args_sent: args.count})
     #
     # Sinon, on peut filtrer la liste avec la méthode et la
     # mettre dans la variable qui contient la liste des adresses
@@ -48,5 +47,11 @@ class ReceiversBox
     @receivers = Mailing.send(method_name, *args)
 
     return true
+  end
+
+  # @return [Integer] Le nombre de paramètres de la méthode de 
+  # filtrage +method+ (Mailing#+method+)
+  def nb_params(method)
+    Mailing.method(method).parameters.count
   end
 end

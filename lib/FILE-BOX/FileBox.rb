@@ -14,6 +14,11 @@ class FileBox
   # C'est la méthode qui réagit à "send-mails path/to/file" dans le
   # Terminal (en fait, c'est le runner.rb qui l'appelle)
   # 
+  # @note
+  # 
+  #   C'est la méthode qu'on doit appeler pour les tests, car elle
+  #   raise les erreurs.
+  # 
   # @param options [Hash]
   # 
   #   Options pour l'envoi. Inutilisé pour le moment.
@@ -62,20 +67,6 @@ class FileBox
     # 
     report.set_ok
     
-  rescue VPLError => e
-    e.draw_motor
-    raise e.message # pour utiliser assert_raises dans les tests
-  rescue Exception => e
-    SUPERVISOR.fatal_error(e) # exit
-  ensure
-    #
-    # Arrêt du rapport
-    # 
-    report.stop
-    #
-    # Affichage du rapport final
-    # 
-    report.display_report
   end
 
   def report

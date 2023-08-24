@@ -39,21 +39,24 @@ class Image
     valid?
   end
 
+  def throw_box(err_msg)
+    raise VPLError.new(err_msg, :msgtype_box)
+  end
+
   def to_html
     CODE_IMAGE_TEMPLATE % data_template
   end
 
+
   # @return true si l'image est valide, sinon, définit l'erreur @error
   # qui sera utilisée par la méthode de test
   def valid?
-    @path || raise(ERRORS[:messageType][:unknown_image] % {key: key})
+    @path || throw_box(ERRORS[:messageType][:unknown_image] % {key: key})
     @path = File.expand_path(File.join(@filebox.folder,@path)) if @path.start_with?('.')
     # debug("@path = #{@path.inspect}")
-    VALID_IMG_EXTNAMES.include?(File.extname(@path).downcase) || raise(ERRORS[:messageType][:image_bad_extname] % {key: key, name:File.basename(@path), exts:VALID_IMG_EXTNAMES.join(', ') })
-    File.exist?(@path) || raise(ERRORS[:messageType][:unfound_image] % {path: @path, key: key})
+    VALID_IMG_EXTNAMES.include?(File.extname(@path).downcase) || throw_box(ERRORS[:messageType][:image_bad_extname] % {key: key, name:File.basename(@path), exts:VALID_IMG_EXTNAMES.join(', ') })
+    File.exist?(@path) || throw_box(ERRORS[:messageType][:unfound_image] % {path: @path, key: key})
     return true
-  rescue Exception => e
-    raise VPLError.new(e.message, :msgtype_box)
   end
 
   def data_template

@@ -15,7 +15,7 @@ require 'singleton'
 class Supervisor
   include Singleton
   def fatal_error(err, err_num = 1)
-    add("FATAL ERROR : #{e.message}\n#{TAB}" + e.backtrace.join("\n#{TAB}"))
+    add("FATAL ERROR : #{err.message}\n#{TAB}" + err.backtrace.join("\n#{TAB}"))
     STDOUT.write "Une erreur fatale est survenue. Consulter le fichier #{path}.".rouge
     exit err_num
   end

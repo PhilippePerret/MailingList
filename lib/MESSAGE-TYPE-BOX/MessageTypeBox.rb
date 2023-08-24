@@ -4,6 +4,10 @@ class MessageTypeBox
     @filebox = filebox
   end
 
+  def throw_box(err_msg)
+    raise VPLError.new(err_msg, @boxes || :msgtype_box)
+  end
+
   # @return [String] Le message où ne reste plus qu'à mettre les
   # variables propres aux destinataires
   def msgtype_html
@@ -97,11 +101,6 @@ class MessageTypeBox
         MessageTypeBox::Image.new(@filebox, key_img)
       end.compact
     end
-  end
-
-
-  def throw(msg)
-    raise VPLError.new(msg, :msgtype_box)
   end
 
 

@@ -6,6 +6,10 @@
 # 
 class ReceiversBox
 
+  def throw_box(err_msg)
+    raise VPLError.new(err_msg, :receivers)
+  end
+
   # Instanciation d'une boite de destinataires avec une boite de
   # fichier mailing.
   # 

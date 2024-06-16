@@ -2,16 +2,13 @@
 
 ## Fonctionnalité à implémenter
 
-### Évaluation des '%'
+### Mémorisation du fichier
 
-On doit pouvoir utiliser les '%' pour les données définies dans le csv (ou une table) comme pour des méthodes personnalisées
-Pour ce faire, il ne faut donc plus utiliser '"<message>" % data_template' mais évaluer le sujet et le message comme du code ruby en cherchant les code '%{...}'
-
-L'avantage sera de ne plus avoir à doubler les '%' (supprimer ce traitement fait dans markdown pour ne pas avoir de problème).
+Quand le destinataire vient d'un fichier, on enregistre ce fichier (path) dans ses données (cela permettra ensuite de connaitre le fichier de suivi)
 
 ### Système d'erreur pour l'utilisateur
 
-Pour les erreurs, utiliser le même truc visuel à base de TTY-Box pour montrer où l'erreur se trouve dans le fichier mailing, mais aussi dans un cadre relié à l'information si ça se trouve dans un fichier externe. Par exemple une ligne rouge qui part de la donnée "To" en rouge dans les métadonnées et rejoint un cadres décrit comme le fichier CSV contenant les destinataires.
+`VPF` (Visual Programming Feedback) Pour les erreurs, utiliser le même truc visuel à base de TTY-Box pour montrer où l'erreur se trouve dans le fichier mailing, mais aussi dans un cadre relié à l'information si ça se trouve dans un fichier externe. Par exemple une ligne rouge qui part de la donnée "To" en rouge dans les métadonnées et rejoint un cadres décrit comme le fichier CSV contenant les destinataires.
 
 Pouvoir décider, par exemple avec l'option `-dev`, d'afficher un moteur plutôt qu'un autre.
 

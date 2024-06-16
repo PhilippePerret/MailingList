@@ -14,7 +14,8 @@ class ReceiversBox
   # fichier mailing.
   # 
   def initialize(filebox)
-    @filebox = filebox
+    @filebox    = filebox
+    @receivers  = nil
   end
 
   # La liste finale des destinataires (toutes exclusions effectuées)

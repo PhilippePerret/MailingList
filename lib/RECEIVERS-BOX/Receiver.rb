@@ -95,7 +95,10 @@ class Receiver
       # Les variables définies dans le fichier CSV (ou la table
       # fournie pour le destinataire)
       # 
+      # puts "Data = #{data.inspect}".bleu
+      # sleep 1
       data.each do |k, v|
+        next if v.nil?
         h.merge!(
           k.to_sym                => v,
           k.to_s.upcase.to_sym    => v.upcase,

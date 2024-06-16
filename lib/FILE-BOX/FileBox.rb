@@ -4,7 +4,6 @@ class FileBox
 
   def initialize(path = nil)
     @path = path
-    check_file_param(path)
   end
 
   # = main =
@@ -50,8 +49,9 @@ class FileBox
     # Envoi du message aux destinataires
     # 
     STDOUT.write "\n\n"
+
     destinataires.each do |destinataire|
-      if sender.send_to(destinataire, options)
+      if expeditor.send_to(destinataire, options)
         report << "- Message envoyé avec succès à #{destinataire.mail}"
       else
         report << "- Échec de l'envoi à #{destinataire.mail}"
@@ -74,8 +74,8 @@ class FileBox
   # Instance de la boite d'envoi du message
   # (c'est la partie du moteur qui transmet concrètement le message)
   # 
-  def sender
-    @sender ||= SenderBox.new(self, options)    
+  def expeditor
+    @expeditor ||= SenderBox.new(self)    
   end
 
   # Instance du rapport
@@ -135,32 +135,32 @@ class FileBox
     @affixe ||= File.basename(path, File.extname(path))
   end
 
+  # Vérifie que le fichier mailing soit conforme
+  # Dans le cas contraire, produit une erreur fatale.
+  def check_file_param(file = nil)
+    file ||= path || raise(ERRORS[:file_box][:requires_path])
+    file = "#{file}.md" unless file.end_with?('.md')
+    File.exist?(file) || raise(ERRORS[:file_box][:file_should_exist] % {path: file})
+    @path = file
+    file_contains_metadata?       || raise(ERRORS[:file_box][:requires_metadata] % {path: file})
+    file_contains_message?        || raise(ERRORS[:file_box][:requires_message] % {path: file})
+    metadata.contains_subject?    || raise(ERRORS[:file_box][:requires_subject] % {path: file})
+    metadata.contains_sender?     || raise(ERRORS[:file_box][:requires_sender] % {path: file})
+    metadata.contains_receivers?  || raise(ERRORS[:file_box][:requires_receivers] % {path: file})
+    metadata.precheck_receivers # produit lui-même les erreurs
+    metadata.sender_ok?           || raise(ERRORS[:file_box][:bad_sender] % {path: file, sender:metadata.sender})
+  rescue Exception => e
+    raise VPLError.new(e.message, :file_box)
+  end
+
   private
 
-    # Vérifie que le fichier mailing soit conforme
-    # Dans le cas contraire, produit une erreur fatale.
-    def check_file_param(file)
-      file || raise(ERRORS[:file_box][:requires_path])
-      file = "#{file}.md" unless file.end_with?('.md')
-      File.exist?(file) || raise(ERRORS[:file_box][:file_should_exist] % {path: file})
-      @path = file
-      file_contains_metadata?       || raise(ERRORS[:file_box][:requires_metadata] % {path: file})
-      file_contains_message?        || raise(ERRORS[:file_box][:requires_message] % {path: file})
-      metadata.contains_subject?    || raise(ERRORS[:file_box][:requires_subject] % {path: file})
-      metadata.contains_sender?     || raise(ERRORS[:file_box][:requires_sender] % {path: file})
-      metadata.contains_receivers?  || raise(ERRORS[:file_box][:requires_receivers] % {path: file})
-      metadata.precheck_receivers # produit lui-même les erreurs
-      metadata.sender_ok?           || raise(ERRORS[:file_box][:bad_sender] % {path: file, sender:metadata.sender})
-    rescue Exception => e
-      raise VPLError.new(e.message, :file_box)
-    end
 
-    def check_options_param(options)
-      options ||= {}
-      options.key?(:simulation) || options.merge!(simulation: CLI.option(:s)||false)
-      options.key?(:delay)      || options.merge!(delay: !CLI.option(:d))
-
-      return options
+    def check_options_param(otps)
+      otps ||= {}
+      otps.key?(:simulation) || otps.merge!(simulation: CLI.option(:s)||false)
+      otps.key?(:delay)      || otps.merge!(delay: !CLI.option(:d))
+      return otps
     end
 
     # @return true si le fichier définit un message (même court)

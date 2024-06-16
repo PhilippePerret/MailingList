@@ -66,6 +66,7 @@ else
     mail_file_path = File.expand_path(mail_file_path) if mail_file_path
     begin
       filebox = FileBox.new(mail_file_path)
+      filebox.check_file_param
       filebox.send(**CLI.options)
     rescue VPLError => e
       #

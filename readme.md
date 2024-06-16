@@ -2,6 +2,8 @@
 
 Pour envoyer des mailings-lists.
 
+> Le fichier appelé par la commande alias `send-mails` est `bin/send-mails`
+
 Le programme est testé comme un moteur, en VPL.
 
 ## Mise en forme du message

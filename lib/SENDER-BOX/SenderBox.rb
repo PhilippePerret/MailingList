@@ -75,9 +75,18 @@ class SenderBox
   #   Adresse mail du destinataire
   # 
   def proceed_simulation(message, sender, recipient)
-    mkdir_p(File.join(APP_FOLDER,'tmp','mails'))
-    path = File.join(APP_FOLDER,'tmp','mails',"#{sender}->#{recipient}.eml")
-    File.open(path,'wb') { |f| f.write message }
+    path = File.join(self.class.simulation_mails_folder,"#{sender}->#{recipient}.eml")
+    IO.write(path, message)
+  end
+
+  class << self
+    def simulation_mails_folder
+      @simulation_mails_folder ||= begin
+        File.join(`pwd`.strip, "mails-simulations").tap do |pth|
+          FileUtils.mkdir_p(pth) 
+        end
+      end
+    end
   end
 
   # Procède véritablement à l'envoi

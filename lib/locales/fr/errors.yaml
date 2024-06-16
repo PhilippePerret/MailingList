@@ -9,6 +9,22 @@ file_box:
     Le fichier '%{path}' devrait définir ses métadonnées.
     Les métadonnées se trouvent en haut du fichier, entre deux '---'
     et permettent de définir le sujet, les destinataires, etc.
+
+     _____________________________________________________
+    | ---                                                 |
+    | Subject = "Le sujet du mailing"                     |
+    | Form = Patronyme <mail expéditeur>                  |
+    | To = <fichier de destinataires>                     |
+    |                                                     |
+    | Excludes = <fichier(s) des exclusions>              |
+    |                                                     |
+    | IMG<id> = path/to/img.png                           |
+    | ---                                                 |
+    | <le message du mailing>                             |
+    |                                                     |
+    | Avec une IMG<id> pour voir.                         |
+    |_____________________________________________________|
+
   requires_message: |
     Le fichier '%{path}' devrait définir un message (type).
   requires_subject: |
